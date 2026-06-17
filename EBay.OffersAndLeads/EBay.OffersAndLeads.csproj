@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>EBay.OffersAndLeads</RootNamespace>
+    <AssemblyName>EBay.OffersAndLeads</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>EBay.OffersAndLeads</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>eBay</Authors>
+    <Description>Offers and Leads SDK for eBay Feed API and GraphQL Offer operations</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Kiota.Bundle" Version="1.*" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.*" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.*" />
+    <PackageReference Include="StrawberryShake.Server" Version="15.*" />
+  </ItemGroup>
+
+</Project>

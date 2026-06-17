@@ -1,0 +1,34 @@
+{
+  "descriptionHash": "9D765F434D3CEF2A4FF19BD48DFED6BF00FB3D717B16541942DBA02B08FA61504B1D02CEAA25F02133784FB0473A4C74B0D8CBF060A7063AFF59733D4C82CE42",
+  "descriptionLocation": "../../../specs/sell_feed_v1_oas3.yaml",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.31.0",
+  "clientClassName": "FeedApiClient",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "EBay.OffersAndLeads.Generated.Feed",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}

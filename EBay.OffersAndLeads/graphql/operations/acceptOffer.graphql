@@ -1,0 +1,76 @@
+mutation AcceptOffer($input: AcceptOfferInput!) {
+  acceptOffer(input: $input) {
+    __typename
+    ... on AcceptOfferSent {
+      offer {
+        offerId
+        status
+        offerCreatorRole
+        offerCreatorUser {
+          userId
+          username
+          shippingZone {
+            countryCode
+            postalCode
+            stateOrProvince
+          }
+          newUser
+          individualIdentityProfile {
+            email
+            firstName
+            lastName
+            middleName
+            primaryPhone {
+              countryCode
+              dialCode
+              phoneNumberType
+              phoneNumber
+            }
+            profileAddress {
+              addressLine1
+              addressLine2
+              city
+              countryCode
+              postalCode
+              stateOrProvince
+            }
+          }
+          userCreatedAt
+        }
+        quantity
+        updatedAt
+        createdAt
+        expiresAt
+        message
+        offerPrice {
+          converted {
+            currency
+            value
+          }
+          original {
+            currency
+            value
+          }
+        }
+      }
+      purchaseReference {
+        __typename
+        ... on ItemCommitment {
+          itemCommitmentId
+        }
+      }
+    }
+    ... on OfferBusinessRulesViolated {
+      errorCode
+      errorMessage
+      violations {
+        ruleDescription
+      }
+    }
+    ... on ReferenceArgumentsNotFound {
+      argumentNames
+      errorCode
+      errorMessage
+    }
+  }
+}

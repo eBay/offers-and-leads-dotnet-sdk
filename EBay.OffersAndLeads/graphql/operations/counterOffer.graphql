@@ -1,0 +1,39 @@
+mutation CounterOffer($input: CounterOfferInput!) {
+  counterOffer(input: $input) {
+    __typename
+    ... on CounterOfferSent {
+      offer {
+        offerId
+        offerCreatorRole
+        status
+        offerPrice {
+          original {
+            value
+            currency
+          }
+          converted {
+            value
+            currency
+          }
+        }
+        quantity
+        createdAt
+        updatedAt
+        expiresAt
+        message
+      }
+    }
+    ... on OfferBusinessRulesViolated {
+      errorCode
+      errorMessage
+      violations {
+        ruleDescription
+      }
+    }
+    ... on ReferenceArgumentsNotFound {
+      errorCode
+      errorMessage
+      argumentNames
+    }
+  }
+}

@@ -1,0 +1,42 @@
+mutation MakeOffer($input: MakeOfferInput!) {
+  makeOffer(input: $input) {
+    __typename
+    ... on MakeOfferSent {
+      offer {
+        offerId
+        offerCreatorRole
+        status
+        offerPrice {
+          original {
+            value
+            currency
+          }
+          converted {
+            value
+            currency
+          }
+        }
+        quantity
+        createdAt
+        updatedAt
+        expiresAt
+        message
+        offerCreatorUser {
+          userId
+        }
+      }
+    }
+    ... on OfferBusinessRulesViolated {
+      errorCode
+      errorMessage
+      violations {
+        ruleDescription
+      }
+    }
+    ... on ReferenceArgumentsNotFound {
+      errorCode
+      errorMessage
+      argumentNames
+    }
+  }
+}

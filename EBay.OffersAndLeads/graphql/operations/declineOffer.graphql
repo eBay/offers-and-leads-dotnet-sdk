@@ -1,0 +1,42 @@
+mutation DeclineOffer($input: DeclineOfferInput!) {
+  declineOffer(input: $input) {
+    __typename
+    ... on DeclineOfferSent {
+      offer {
+        offerId
+        createdAt
+        expiresAt
+        message
+        offerPrice {
+          converted {
+            currency
+            value
+          }
+          original {
+            currency
+            value
+          }
+        }
+        quantity
+        status
+        updatedAt
+        offerCreatorRole
+        offerCreatorUser {
+          userId
+        }
+      }
+    }
+    ... on OfferBusinessRulesViolated {
+      errorCode
+      errorMessage
+      violations {
+        ruleDescription
+      }
+    }
+    ... on ReferenceArgumentsNotFound {
+      errorCode
+      argumentNames
+      errorMessage
+    }
+  }
+}
