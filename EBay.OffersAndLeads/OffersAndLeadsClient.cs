@@ -16,8 +16,10 @@
 using EBay.OffersAndLeads.Clients.GraphQL;
 using EBay.OffersAndLeads.Clients.Rest;
 using EBay.OffersAndLeads.Configuration;
+using EBay.OffersAndLeads.Extensions;
 using EBay.OffersAndLeads.Generated.Feed;
 using EBay.OffersAndLeads.Generated.GraphQL;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 
@@ -58,13 +60,35 @@ public sealed class OffersAndLeadsClient : IDisposable
 
     /// <summary>
     /// Standalone constructor for use outside DI (tests, scripts).
-    /// Creates its own HttpClient and does not use StrawberryShake DI.
-    /// Typed GraphQL operations are unavailable; use GraphQL.ExecuteRawUnsafeAsync instead.
+    /// Builds a minimal internal service provider so that typed GraphQL operations work
+    /// without requiring the caller to set up DI.
     /// </summary>
     public OffersAndLeadsClient(OffersAndLeadsConfiguration config)
-        : this(config, BuildStandaloneHttpClient(config), null!, new AsyncLocalTokenContext())
     {
+        var tokenContext = new AsyncLocalTokenContext();
+        var httpClient = BuildStandaloneHttpClient(config);
+        _httpClient = httpClient;
         _ownsHttpClient = true;
+
+        var auth = new BaseBearerTokenAuthenticationProvider(new KiotaAuthProvider(config, tokenContext));
+
+        ClassifiedLeads = new ClassifiedLeadsClient(
+            new FeedApiClient(new HttpClientRequestAdapter(auth, httpClient: BuildKiotaClient(config.LeadsBaseUrl, httpClient))),
+            config,
+            tokenContext);
+        GraphQL = new OfferGraphQLClient(
+            BuildStandaloneGqlClient(config, tokenContext),
+            new DynamicGraphQLClient(httpClient, config, tokenContext),
+            tokenContext);
+    }
+
+    private static IOffersAndLeadsGraphQLClient BuildStandaloneGqlClient(
+        OffersAndLeadsConfiguration config, ITokenContext tokenContext)
+    {
+        var services = new ServiceCollection();
+        services.AddOffersAndLeadsSdk(config);
+        services.AddSingleton(tokenContext);
+        return services.BuildServiceProvider().GetRequiredService<IOffersAndLeadsGraphQLClient>();
     }
 
     private static HttpClient BuildKiotaClient(string baseUrl, HttpClient httpClient)
