@@ -87,7 +87,7 @@ public sealed class OffersAndLeadsClient : IDisposable
     {
         var services = new ServiceCollection();
         services.AddOffersAndLeadsSdk(config);
-        services.AddSingleton(tokenContext);
+        services.AddSingleton<ITokenContext>(tokenContext);
         return services.BuildServiceProvider().GetRequiredService<IOffersAndLeadsGraphQLClient>();
     }
 
