@@ -118,11 +118,22 @@ public sealed class OfferGraphQLClient
         where T : class
     {
         try { return await call(); }
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            throw new UnauthorizedException(ex);
-        }
+        catch (Exception ex) when (ex is not SdkException) { throw WrapException(ex); }
     }
+
+    private static Exception WrapException(Exception ex) => ex switch
+    {
+        HttpRequestException { StatusCode: HttpStatusCode.Unauthorized } => new UnauthorizedException(ex),
+        HttpRequestException { StatusCode: { } code } http =>
+            new SdkException($"GraphQL request failed with HTTP {(int)code}: {http.Message}", ex),
+        HttpRequestException http =>
+            new SdkException($"GraphQL request failed (network error): {http.Message} — check that GraphQLBaseUrl is reachable.", ex),
+        TaskCanceledException =>
+            new SdkException("GraphQL request timed out — check that GraphQLBaseUrl is reachable and the network is accessible.", ex),
+        InvalidOperationException { Message: var msg } when msg.Contains("execution attempt") =>
+            new SdkException("GraphQL request returned no data; the endpoint may be unreachable or returned an unexpected response — check GraphQLBaseUrl.", ex),
+        _ => new SdkException($"GraphQL request failed: {ex.Message}", ex)
+    };
 
     private static void EnsureNoErrors<T>(IOperationResult<T> result)
         where T : class
