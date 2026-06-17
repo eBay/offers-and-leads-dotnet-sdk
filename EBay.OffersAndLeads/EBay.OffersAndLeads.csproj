@@ -12,6 +12,8 @@
     <Version>1.0.0</Version>
     <Authors>eBay</Authors>
     <Description>Offers and Leads SDK for eBay Feed API and GraphQL Offer operations</Description>
+    <PackageProjectUrl>https://github.com/eBay/offers-and-leads-dotnet-sdk</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/eBay/offers-and-leads-dotnet-sdk</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
