@@ -39,6 +39,7 @@ public static class ServiceCollectionExtensions
             .AddHttpClient("OffersAndLeadsGraphQLClient", client =>
                 client.BaseAddress = new Uri(config.GraphQLBaseUrl))
             .AddHttpMessageHandler<BearerTokenHandler>()
+            .AddHttpMessageHandler(_ => new GraphQLHttpHandler(config))
             .ConfigureHttpClient(c => c.Timeout = config.HttpTimeout);
 
         // Dynamic escape hatch
