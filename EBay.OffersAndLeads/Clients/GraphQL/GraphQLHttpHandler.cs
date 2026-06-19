@@ -36,20 +36,19 @@ internal sealed class GraphQLHttpHandler(OffersAndLeadsConfiguration config) : D
         if (config.DiagnosticLogging)
             Console.Error.WriteLine($"[SDK GraphQL] → {(int)response.StatusCode} {response.ReasonPhrase}");
 
-        if (!response.IsSuccessStatusCode)
+        if (config.DiagnosticLogging)
         {
-            if (config.DiagnosticLogging)
-            {
-                var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-                Console.Error.WriteLine($"[SDK GraphQL] Body: {body}");
-                var bytes = Encoding.UTF8.GetBytes(body);
-                var replaced = new ByteArrayContent(bytes);
-                if (response.Content.Headers.ContentType is { } ct2)
-                    replaced.Headers.ContentType = ct2;
-                response.Content = replaced;
-            }
-            response.EnsureSuccessStatusCode();
+            var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+            Console.Error.WriteLine($"[SDK GraphQL] Body: {body}");
+            var bytes = Encoding.UTF8.GetBytes(body);
+            var replaced = new ByteArrayContent(bytes);
+            if (response.Content.Headers.ContentType is { } ct2)
+                replaced.Headers.ContentType = ct2;
+            response.Content = replaced;
         }
+
+        if (!response.IsSuccessStatusCode)
+            response.EnsureSuccessStatusCode();
 
         return response;
     }
