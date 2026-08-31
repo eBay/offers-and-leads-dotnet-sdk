@@ -24,7 +24,7 @@ dotnet kiota generate \
   -c FeedApiClient \
   -n EBay.OffersAndLeads.Generated.Feed \
   -o EBay.OffersAndLeads/Generated/Feed \
-  --ebc --tam internal --co
+  --ebc --co
 
 echo "Adding license headers to generated files..."
 ./add-license-headers.sh ./EBay.OffersAndLeads/Generated
