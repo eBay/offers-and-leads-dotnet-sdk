@@ -26,4 +26,7 @@ dotnet kiota generate \
   -o EBay.OffersAndLeads/Generated/Feed \
   --ebc --tam internal --co
 
+echo "Adding license headers to generated files..."
+./add-license-headers.sh ./EBay.OffersAndLeads/Generated
+
 dotnet build EBay.OffersAndLeads/EBay.OffersAndLeads.csproj
