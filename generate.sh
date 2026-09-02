@@ -29,4 +29,4 @@ dotnet kiota generate \
 echo "Adding license headers to generated files..."
 ./add-license-headers.sh ./EBay.OffersAndLeads/Generated
 
-dotnet build EBay.OffersAndLeads/EBay.OffersAndLeads.csproj
+DOTNET_ROLL_FORWARD=LatestMajor dotnet build EBay.OffersAndLeads/EBay.OffersAndLeads.csproj
