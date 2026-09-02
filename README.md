@@ -269,7 +269,7 @@ When OpenAPI specs or GraphQL schemas change:
 
 # Or manually:
 dotnet tool restore
-dotnet kiota generate -l csharp -d specs/sell_feed_v1_oas3.yaml ...
+dotnet kiota generate -l csharp -d specs/openapi/classified-leads.yaml ...
 dotnet build OffersAndLeadsSdk/OffersAndLeadsSdk.csproj
 ```
 

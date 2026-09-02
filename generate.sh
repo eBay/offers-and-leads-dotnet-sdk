@@ -20,7 +20,7 @@ dotnet tool restore
 
 dotnet kiota generate \
   -l csharp \
-  -d specs/sell_feed_v1_oas3.yaml \
+  -d specs/openapi/classified-leads.yaml \
   -c FeedApiClient \
   -n EBay.OffersAndLeads.Generated.Feed \
   -o EBay.OffersAndLeads/Generated/Feed \
