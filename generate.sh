@@ -16,17 +16,24 @@
 
 set -euo pipefail
 
+echo "Restoring tools..."
 dotnet tool restore
+
+echo "Regenerating REST clients via Kiota..."
+rm -rf ./EBay.OffersAndLeads/Generated
 
 dotnet kiota generate \
   -l csharp \
   -d specs/openapi/classified-leads.yaml \
-  -c FeedApiClient \
-  -n EBay.OffersAndLeads.Generated.Feed \
-  -o EBay.OffersAndLeads/Generated/Feed \
+  -c ClassifiedLeadsApiClient \
+  -n EBay.OffersAndLeads.Generated.ClassifiedLeads \
+  -o EBay.OffersAndLeads/Generated/ClassifiedLeads \
   --ebc --co
 
 echo "Adding license headers to generated files..."
 ./add-license-headers.sh ./EBay.OffersAndLeads/Generated
 
+echo "Building (triggers StrawberryShake GraphQL codegen)..."
 DOTNET_ROLL_FORWARD=LatestMajor dotnet build EBay.OffersAndLeads/EBay.OffersAndLeads.csproj
+
+echo "Done."

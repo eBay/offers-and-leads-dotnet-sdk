@@ -19,64 +19,64 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
-namespace EBay.OffersAndLeads.Generated.Feed.Models
+namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 {
     /// <summary>
-    /// This type provides monetary amount of the special fee.
+    /// This type consists of contact information for the prospective buyer.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class Amount : IAdditionalDataHolder, IParsable
+    public partial class ContactInformation : IAdditionalDataHolder, IParsable
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>A three-letter ISO 4217 code that indicates the currency of the amount in the &lt;b&gt;convertedFromValue&lt;/b&gt; field. This value is required or returned only if currency conversion/localization is required, and represents the pre-conversion currency.</summary>
+        /// <summary>The first name of the prospective buyer.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? ConvertedFromCurrency { get; set; }
+        public string? FirstName { get; set; }
 #nullable restore
 #else
-        public string ConvertedFromCurrency { get; set; }
+        public string FirstName { get; set; }
 #endif
-        /// <summary>The monetary amount before any conversion is performed, in the currency specified by the &lt;b&gt;convertedFromCurrency&lt;/b&gt; field. This value is required or returned only if currency conversion/localization is required. The value field contains the converted amount of this value, in the currency specified by the &lt;b&gt;currency&lt;/b&gt; field.</summary>
+        /// <summary>The last name of the prospective buyer.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? ConvertedFromValue { get; set; }
+        public string? LastName { get; set; }
 #nullable restore
 #else
-        public string ConvertedFromValue { get; set; }
+        public string LastName { get; set; }
 #endif
-        /// <summary>A three-letter ISO 4217 code that indicates the currency of the amount in the &lt;b&gt;value&lt;/b&gt; field. If currency conversion/localization is required, this is the post-conversion currency of the amount in the &lt;b&gt;value&lt;/b&gt; field.</summary>
+        /// <summary>The prospective buyer&apos;s primary phone number.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Currency { get; set; }
+        public string? Phone { get; set; }
 #nullable restore
 #else
-        public string Currency { get; set; }
+        public string Phone { get; set; }
 #endif
-        /// <summary>The monetary amount, in the currency specified by the &lt;b&gt;currency&lt;/b&gt; field. If currency conversion/localization is required, this value is the converted amount, and the &lt;b&gt;convertedFromValue&lt;/b&gt; field contains the amount in the original currency.</summary>
+        /// <summary>The prospective buyer&apos;s postal code.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Value { get; set; }
+        public string? PostalCode { get; set; }
 #nullable restore
 #else
-        public string Value { get; set; }
+        public string PostalCode { get; set; }
 #endif
         /// <summary>
-        /// Instantiates a new <see cref="global::EBay.OffersAndLeads.Generated.Feed.Models.Amount"/> and sets the default values.
+        /// Instantiates a new <see cref="global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ContactInformation"/> and sets the default values.
         /// </summary>
-        public Amount()
+        public ContactInformation()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::EBay.OffersAndLeads.Generated.Feed.Models.Amount"/></returns>
+        /// <returns>A <see cref="global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ContactInformation"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::EBay.OffersAndLeads.Generated.Feed.Models.Amount CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ContactInformation CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::EBay.OffersAndLeads.Generated.Feed.Models.Amount();
+            return new global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ContactInformation();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -86,10 +86,10 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "convertedFromCurrency", n => { ConvertedFromCurrency = n.GetStringValue(); } },
-                { "convertedFromValue", n => { ConvertedFromValue = n.GetStringValue(); } },
-                { "currency", n => { Currency = n.GetStringValue(); } },
-                { "value", n => { Value = n.GetStringValue(); } },
+                { "firstName", n => { FirstName = n.GetStringValue(); } },
+                { "lastName", n => { LastName = n.GetStringValue(); } },
+                { "phone", n => { Phone = n.GetStringValue(); } },
+                { "postalCode", n => { PostalCode = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -99,10 +99,10 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("convertedFromCurrency", ConvertedFromCurrency);
-            writer.WriteStringValue("convertedFromValue", ConvertedFromValue);
-            writer.WriteStringValue("currency", Currency);
-            writer.WriteStringValue("value", Value);
+            writer.WriteStringValue("firstName", FirstName);
+            writer.WriteStringValue("lastName", LastName);
+            writer.WriteStringValue("phone", Phone);
+            writer.WriteStringValue("postalCode", PostalCode);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

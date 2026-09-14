@@ -19,40 +19,48 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
-namespace EBay.OffersAndLeads.Generated.Feed.Models
+namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 {
     /// <summary>
-    /// This type defines the field containing any mail message content shared between the seller and prospective buyer.
+    /// This type returns the amount charged for the lead service.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class MemberMessage : IAdditionalDataHolder, IParsable
+    public partial class LeadFee : IAdditionalDataHolder, IParsable
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>An array that provides detailed information about a member-to-member message.</summary>
+        /// <summary>This type provides monetary amount of the special fee.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessageExchange>? MemberMessageExchange { get; set; }
+        public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.Amount? Amount { get; set; }
 #nullable restore
 #else
-        public List<global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessageExchange> MemberMessageExchange { get; set; }
+        public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.Amount Amount { get; set; }
+#endif
+        /// <summary>An explanation of the special fee charged.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Description { get; set; }
+#nullable restore
+#else
+        public string Description { get; set; }
 #endif
         /// <summary>
-        /// Instantiates a new <see cref="global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessage"/> and sets the default values.
+        /// Instantiates a new <see cref="global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee"/> and sets the default values.
         /// </summary>
-        public MemberMessage()
+        public LeadFee()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessage"/></returns>
+        /// <returns>A <see cref="global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessage CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessage();
+            return new global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -62,7 +70,8 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "memberMessageExchange", n => { MemberMessageExchange = n.GetCollectionOfObjectValues<global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessageExchange>(global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessageExchange.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "amount", n => { Amount = n.GetObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.Amount>(global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.Amount.CreateFromDiscriminatorValue); } },
+                { "description", n => { Description = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -72,7 +81,8 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteCollectionOfObjectValues<global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessageExchange>("memberMessageExchange", MemberMessageExchange);
+            writer.WriteObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.Amount>("amount", Amount);
+            writer.WriteStringValue("description", Description);
             writer.WriteAdditionalData(AdditionalData);
         }
     }
