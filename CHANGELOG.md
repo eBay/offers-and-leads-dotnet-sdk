@@ -2,11 +2,13 @@
 
 ## 0.2.0 (09/14/2026)
 
-Consolidated experimental release.
+### Breaking changes
 
-- REST clients: `ClassifiedLeadsClient`.
-- GraphQL support for 6 checked-in operations.
-- Includes the current API definitions, regenerated clients, and wrapper updates.
-- Preserves existing wrapper parameter order where signatures allow it.
+#### Changed signatures
 
-This entry establishes the consolidated experimental baseline.
+`ClassifiedLeadsClient`:
+
+| Operation | Previous parameters | Current parameters |
+| --- | --- | --- |
+| `GetAllClassifiedLeadsAsync` | `(ClassifiedLeadsFilter?, string?, RequestOptions?, CancellationToken)` | `(string?, string?, string?, string?, string?, string?, RequestOptions?, CancellationToken)` |
+| `GetClassifiedLeadsByItemIdAsync` | `(string, ClassifiedLeadsFilter?, string?, RequestOptions?, CancellationToken)` | `(string, string?, string?, string?, string?, string?, string?, RequestOptions?, CancellationToken)` |
