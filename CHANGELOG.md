@@ -1,8 +1,12 @@
 # ChangeLog
 
-## 1.0.0 (09/14/2026)
+## 0.2.0 (09/14/2026)
 
-**Breaking changes**
-- The following operations changed signature on `ClassifiedLeadsClient`:
-  - `GetAllClassifiedLeadsAsync`: `(ClassifiedLeadsFilter?, string?, RequestOptions?, CancellationToken)` → `(string?, string?, string?, string?, string?, string?, RequestOptions?, CancellationToken)`
-  - `GetClassifiedLeadsByItemIdAsync`: `(string, ClassifiedLeadsFilter?, string?, RequestOptions?, CancellationToken)` → `(string, string?, string?, string?, string?, string?, string?, RequestOptions?, CancellationToken)`
+Consolidated experimental release.
+
+- REST clients: `ClassifiedLeadsClient`.
+- GraphQL support for 6 checked-in operations.
+- Includes the current API definitions, regenerated clients, and wrapper updates.
+- Preserves existing wrapper parameter order where signatures allow it.
+
+This entry establishes the consolidated experimental baseline.

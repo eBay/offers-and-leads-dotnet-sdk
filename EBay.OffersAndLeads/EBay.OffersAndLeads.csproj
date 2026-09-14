@@ -9,7 +9,7 @@
     <AssemblyName>EBay.OffersAndLeads</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>EBay.OffersAndLeads</PackageId>
-    <Version>1.0.0</Version>
+    <Version>0.2.0</Version>
     <Authors>eBay</Authors>
     <Description>Offers and Leads SDK for eBay Feed API and GraphQL Offer operations</Description>
     <PackageProjectUrl>https://github.com/eBay/offers-and-leads-dotnet-sdk</PackageProjectUrl>
