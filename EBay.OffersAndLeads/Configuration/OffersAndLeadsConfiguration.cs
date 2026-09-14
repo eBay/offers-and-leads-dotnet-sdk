@@ -52,7 +52,7 @@ public sealed class OffersAndLeadsConfiguration
     /// <summary>Headers applied to every REST request. Per-call RequestOptions override these.</summary>
     public RequestOptions DefaultRequestOptions { get; set; } = new();
 
-    internal IEnumerable<string> AllowedHosts => ["api.ebay.com", "apim.ebay.com", "apiz.ebay.com"];
+    internal static IEnumerable<string> AllowedHosts => ["api.ebay.com", "apim.ebay.com", "apiz.ebay.com"];
 
     private static string RequireHttps(string value, string paramName)
     {

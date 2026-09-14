@@ -41,3 +41,6 @@ jobs:
 
       - name: Build
         run: dotnet build "${{ steps.project.outputs.path }}" --no-restore
+
+      - name: Static analysis
+        run: ./scripts/analyze
