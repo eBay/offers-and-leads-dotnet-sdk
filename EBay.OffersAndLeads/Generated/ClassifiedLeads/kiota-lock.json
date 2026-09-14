@@ -1,8 +1,8 @@
 {
-  "descriptionHash": "9D765F434D3CEF2A4FF19BD48DFED6BF00FB3D717B16541942DBA02B08FA61504B1D02CEAA25F02133784FB0473A4C74B0D8CBF060A7063AFF59733D4C82CE42",
-  "descriptionLocation": "../../../specs/openapi/classified-leads.yaml",
+  "descriptionHash": "754563705DBF6A531E5833D78D588B417739A2C485762EE043A0310D475CDD858A679DFD82F7640A519B77364875C645E241FDCD538CE2F17D0579608A5EC1BB",
+  "descriptionLocation": "../../../specs/openapi/classified-leads.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.31.0",
+  "kiotaVersion": "1.35.0",
   "clientClassName": "ClassifiedLeadsApiClient",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "EBay.OffersAndLeads.Generated.ClassifiedLeads",
@@ -30,5 +30,6 @@
   ],
   "includePatterns": [],
   "excludePatterns": [],
-  "disabledValidationRules": []
+  "disabledValidationRules": [],
+  "allowedExternalOrigins": []
 }

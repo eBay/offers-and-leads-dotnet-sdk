@@ -22,14 +22,14 @@ using System;
 namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 {
     /// <summary>
-    /// This type provides monetary amount of the special fee.
+    /// This type provides the monetary amount of the special fee.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class Amount : IAdditionalDataHolder, IParsable
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>A three-letter ISO 4217 code that indicates the currency of the amount in the &lt;b&gt;convertedFromValue&lt;/b&gt; field. This value is required or returned only if currency conversion/localization is required, and represents the pre-conversion currency.</summary>
+        /// <summary>A three-letter ISO 4217 code that indicates the currency of the amount in the &lt;strong&gt;convertedFromValue&lt;/strong&gt; field. This value is required or returned only if currency conversion/localization is required and represents the pre-conversion currency.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? ConvertedFromCurrency { get; set; }
@@ -37,7 +37,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string ConvertedFromCurrency { get; set; }
 #endif
-        /// <summary>The monetary amount before any conversion is performed, in the currency specified by the &lt;b&gt;convertedFromCurrency&lt;/b&gt; field. This value is required or returned only if currency conversion/localization is required. The value field contains the converted amount of this value, in the currency specified by the &lt;b&gt;currency&lt;/b&gt; field.</summary>
+        /// <summary>The monetary amount before any conversion is performed in the currency specified by the &lt;strong&gt;convertedFromCurrency&lt;/strong&gt; field. This value is required or returned only if currency conversion/localization is required. The value field contains the converted amount of this value in the currency specified by the &lt;strong&gt;currency&lt;/strong&gt; field.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? ConvertedFromValue { get; set; }
@@ -45,7 +45,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string ConvertedFromValue { get; set; }
 #endif
-        /// <summary>A three-letter ISO 4217 code that indicates the currency of the amount in the &lt;b&gt;value&lt;/b&gt; field. If currency conversion/localization is required, this is the post-conversion currency of the amount in the &lt;b&gt;value&lt;/b&gt; field.</summary>
+        /// <summary>A three-letter ISO 4217 code that indicates the currency of the amount in the &lt;strong&gt;value&lt;/strong&gt; field. If currency conversion/localization is required, this is the post-conversion currency of the amount in the &lt;strong&gt;value&lt;/strong&gt; field.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Currency { get; set; }
@@ -53,7 +53,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string Currency { get; set; }
 #endif
-        /// <summary>The monetary amount, in the currency specified by the &lt;b&gt;currency&lt;/b&gt; field. If currency conversion/localization is required, this value is the converted amount, and the &lt;b&gt;convertedFromValue&lt;/b&gt; field contains the amount in the original currency.</summary>
+        /// <summary>The monetary amount in the currency specified in the &lt;strong&gt;currency&lt;/strong&gt; field. If currency conversion/localization is required, this value is the converted amount, and the &lt;strong&gt;convertedFromValue&lt;/strong&gt; field contains the amount in the original currency.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Value { get; set; }

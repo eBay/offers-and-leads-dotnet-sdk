@@ -22,7 +22,7 @@ using System;
 namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 {
     /// <summary>
-    /// This type contains an array of for the seller&apos;s active classified ad listings, the total number of items, and leads.
+    /// This type contains an array of the seller&apos;s active classified ad listings and the total number of items and leads.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class ClassifiedLeadsListResponse : IAdditionalDataHolder, IParsable

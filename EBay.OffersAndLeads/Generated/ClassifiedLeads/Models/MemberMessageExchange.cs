@@ -29,7 +29,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Date the message was created. Returned if the parent container is returned.</summary>
+        /// <summary>This is the date the message was created. It is returned if the parent container is returned.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? CreationDate { get; set; }
@@ -37,7 +37,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string CreationDate { get; set; }
 #endif
-        /// <summary>Question</summary>
+        /// <summary>This contains all the information about the question being asked. It is returned if the parent container is returned.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.Question? Question { get; set; }
@@ -45,7 +45,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.Question Question { get; set; }
 #endif
-        /// <summary>An answer to the question. Contains the body of the seller&apos;s response message, if sent.</summary>
+        /// <summary>This is an answer to the question. It contains the body of the seller&apos;s response message, if sent.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Response { get; set; }
