@@ -1,0 +1,5 @@
+[EBay.*/Generated/**.cs]
+generated_code = true
+
+[**/obj/**.cs]
+generated_code = true
