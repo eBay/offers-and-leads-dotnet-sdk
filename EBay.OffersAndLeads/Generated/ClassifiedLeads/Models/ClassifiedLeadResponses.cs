@@ -22,14 +22,14 @@ using System;
 namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 {
     /// <summary>
-    /// This type provides classified lead responses including any contact information that prospective buyers have submitted.
+    /// This type provides classified lead responses, including any contact information that prospective buyers have submitted.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class ClassifiedLeadResponses : IAdditionalDataHolder, IParsable
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>This field shows the first message that was sent from the prospective buyer to the seller. This will be the same content as in the &lt;b&gt;memberMessageExchange.question.body&lt;/b&gt; field, if returned. &lt;br&gt;&lt;br&gt;&lt;span class=&quot;tablenote&quot;&gt; &lt;strong&gt;Note:&lt;/strong&gt; Retrieve the &lt;b&gt;memberMessageExchange&lt;/b&gt; container to retrieve the entire exchange between the seller and the prospective buyer (all messages).&lt;/span&gt;</summary>
+        /// <summary>This field shows the first message that was sent from the prospective buyer to the seller. This will be the same content as in the &lt;strong&gt;memberMessageExchange.question.body&lt;/strong&gt; field, if returned. &lt;br&gt;&lt;br&gt;&lt;span class=&quot;tablenote&quot;&gt; &lt;strong&gt;Note:&lt;/strong&gt; Retrieve the &lt;strong&gt;memberMessageExchange&lt;/strong&gt; container to retrieve the entire exchange between the seller and the prospective buyer (all messages).&lt;/span&gt;</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? AdditionalInformation { get; set; }
@@ -37,7 +37,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string AdditionalInformation { get; set; }
 #endif
-        /// <summary>This type consists of contact information for the prospective buyer.</summary>
+        /// <summary>This container consists of contact information for the prospective buyer. Fields in this container are returned if provided. This container will not be returned if the buyer did not provide any contact information.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ContactInformation? ContactInformation { get; set; }
@@ -53,7 +53,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string Email { get; set; }
 #endif
-        /// <summary>Email address for the prospective buyer as entered in the lead form on the &lt;b&gt;View Item&lt;/b&gt; page. Provides a way for sellers to contact prospective buyers who choose not to log in to eBay. This applies to only eBay Motors and eBay Motors categories.</summary>
+        /// <summary>Email address for the prospective buyer as entered in the lead form on the &lt;strong&gt;View Item&lt;/strong&gt; page. Provides a way for sellers to contact prospective buyers who choose not to log in to eBay. This applies only to eBay Motors and eBay Motors categories.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? ExternalEmail { get; set; }
@@ -61,9 +61,9 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string ExternalEmail { get; set; }
 #endif
-        /// <summary>Boolean that indicates if a prospective buyer answered whether or not they would like financing. Entered on the lead form on the &lt;b&gt;View Item&lt;/b&gt; page. Applies to eBay Motors and Motors categories only.</summary>
+        /// <summary>Boolean that indicates if a prospective buyer answered whether or not they would like financing. Entered on the lead form on the &lt;strong&gt;View Item&lt;/strong&gt; page. This applies only to eBay Motors and Motors categories.</summary>
         public bool? FinancingAnswer { get; set; }
-        /// <summary>This type returns the amount charged for the lead service.</summary>
+        /// <summary>A container that returns the amount charged for this pay-per-lead contact in the item&apos;s site local currency.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee? LeadFee { get; set; }
@@ -71,15 +71,9 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee LeadFee { get; set; }
 #endif
-        /// <summary>The enumeration value in this field indicates whether or not the seller has responded to the lead, or if this is new. For implementation help, refer to &lt;a href=&apos;https://developer.ebay.com/api-docs/sell/leads/types/api:LeadStatus&apos;&gt;eBay API documentation&lt;/a&gt;</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? LeadStatus { get; set; }
-#nullable restore
-#else
-        public string LeadStatus { get; set; }
-#endif
-        /// <summary>This type defines the field containing any mail message content shared between the seller and prospective buyer.</summary>
+        /// <summary>The enumeration value in this field indicates whether or not the seller has responded to the lead or if this is new.</summary>
+        public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadStatus? LeadStatus { get; set; }
+        /// <summary>Contains any mail message content shared between the seller and prospective buyer. &lt;br&gt;&lt;br&gt;Only returned if the &lt;strong&gt;includeMessages&lt;/strong&gt; boolean is &lt;code&gt;true&lt;/code&gt;.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage? MemberMessage { get; set; }
@@ -95,7 +89,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string SubmittedTime { get; set; }
 #endif
-        /// <summary>The make of the vehicle the prospective buyer would like to trade in. Entered on the lead form on the &lt;b&gt;View Item&lt;/b&gt; page. Applies to eBay Motors and Motors categories only.</summary>
+        /// <summary>The make of the vehicle the prospective buyer would like to trade in. This is entered on the lead form on the &lt;strong&gt;View Item&lt;/strong&gt; page. This applies only to eBay Motors and eBay Motors categories.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? TradeInMake { get; set; }
@@ -103,7 +97,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string TradeInMake { get; set; }
 #endif
-        /// <summary>The model of the vehicle the prospective buyer would like to trade in. Entered on the lead form on the &lt;b&gt;View Item&lt;/b&gt; page. Applies to eBay Motors and Motors categories only.</summary>
+        /// <summary>The model of the vehicle the prospective buyer would like to trade in. This is entered on the lead form on the &lt;strong&gt;View Item&lt;/strong&gt; page. This applies only to eBay Motors and eBay Motors categories.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? TradeInModel { get; set; }
@@ -111,7 +105,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string TradeInModel { get; set; }
 #endif
-        /// <summary>The year of the vehicle the prospective buyer would like to trade in. Entered on the lead form on the &lt;b&gt;View Item&lt;/b&gt; page. Applies to eBay Motors and Motors categories only.</summary>
+        /// <summary>The year of the vehicle the prospective buyer would like to trade in. This is entered on the lead form on the &lt;strong&gt;View Item&lt;/strong&gt; page. This applies only to eBay Motors and eBay Motors categories.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? TradeInYear { get; set; }
@@ -158,7 +152,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
                 { "externalEmail", n => { ExternalEmail = n.GetStringValue(); } },
                 { "financingAnswer", n => { FinancingAnswer = n.GetBoolValue(); } },
                 { "leadFee", n => { LeadFee = n.GetObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee>(global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee.CreateFromDiscriminatorValue); } },
-                { "leadStatus", n => { LeadStatus = n.GetStringValue(); } },
+                { "leadStatus", n => { LeadStatus = n.GetEnumValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadStatus>(); } },
                 { "memberMessage", n => { MemberMessage = n.GetObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage>(global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage.CreateFromDiscriminatorValue); } },
                 { "submittedTime", n => { SubmittedTime = n.GetStringValue(); } },
                 { "tradeInMake", n => { TradeInMake = n.GetStringValue(); } },
@@ -180,7 +174,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
             writer.WriteStringValue("externalEmail", ExternalEmail);
             writer.WriteBoolValue("financingAnswer", FinancingAnswer);
             writer.WriteObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee>("leadFee", LeadFee);
-            writer.WriteStringValue("leadStatus", LeadStatus);
+            writer.WriteEnumValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadStatus>("leadStatus", LeadStatus);
             writer.WriteObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage>("memberMessage", MemberMessage);
             writer.WriteStringValue("submittedTime", SubmittedTime);
             writer.WriteStringValue("tradeInMake", TradeInMake);

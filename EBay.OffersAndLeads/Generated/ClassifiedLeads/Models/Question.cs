@@ -22,14 +22,14 @@ using System;
 namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 {
     /// <summary>
-    /// Question
+    /// This type contains the body and ID of the question.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class Question : IAdditionalDataHolder, IParsable
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Content of the message is input into this string field.</summary>
+        /// <summary>This is the content of the message.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Body { get; set; }
@@ -37,7 +37,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string Body { get; set; }
 #endif
-        /// <summary>The unique identifier of the message.</summary>
+        /// <summary>This is the unique identifier of the message.</summary>
         public int? MessageID { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.Question"/> and sets the default values.

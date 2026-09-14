@@ -37,7 +37,7 @@ namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 #else
         public string ItemId { get; set; }
 #endif
-        /// <summary>The title of the listing.&lt;br&gt;&lt;br&gt;&lt;b&gt;Max length:&lt;/b&gt; 80.</summary>
+        /// <summary>The title of the listing.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Maximum length:&lt;/strong&gt; 80</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? ItemTitle { get; set; }
