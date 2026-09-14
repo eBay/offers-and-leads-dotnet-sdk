@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EBay.OffersAndLeads.Configuration;
 using System.Text;
 
@@ -42,8 +41,8 @@ internal sealed class GraphQLHttpHandler(OffersAndLeadsConfiguration config) : D
             Console.Error.WriteLine($"[SDK GraphQL] Body: {body}");
             var bytes = Encoding.UTF8.GetBytes(body);
             var replaced = new ByteArrayContent(bytes);
-            if (response.Content.Headers.ContentType is { } ct2)
-                replaced.Headers.ContentType = ct2;
+            if (response.Content.Headers.ContentType is { } contentType)
+                replaced.Headers.ContentType = contentType;
             response.Content = replaced;
         }
 

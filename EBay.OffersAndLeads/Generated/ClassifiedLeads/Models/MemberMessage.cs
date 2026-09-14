@@ -19,56 +19,40 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
-namespace EBay.OffersAndLeads.Generated.Feed.Models
+namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 {
     /// <summary>
-    /// This type defines the fields containing detailed information about a member-to-member message.
+    /// This type defines the field containing any mail message content shared between the seller and prospective buyer.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class MemberMessageExchange : IAdditionalDataHolder, IParsable
+    public partial class MemberMessage : IAdditionalDataHolder, IParsable
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Date the message was created. Returned if the parent container is returned.</summary>
+        /// <summary>An array that provides detailed information about a member-to-member message.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? CreationDate { get; set; }
+        public List<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessageExchange>? MemberMessageExchange { get; set; }
 #nullable restore
 #else
-        public string CreationDate { get; set; }
-#endif
-        /// <summary>Question</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public global::EBay.OffersAndLeads.Generated.Feed.Models.Question? Question { get; set; }
-#nullable restore
-#else
-        public global::EBay.OffersAndLeads.Generated.Feed.Models.Question Question { get; set; }
-#endif
-        /// <summary>An answer to the question. Contains the body of the seller&apos;s response message, if sent.</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Response { get; set; }
-#nullable restore
-#else
-        public string Response { get; set; }
+        public List<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessageExchange> MemberMessageExchange { get; set; }
 #endif
         /// <summary>
-        /// Instantiates a new <see cref="global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessageExchange"/> and sets the default values.
+        /// Instantiates a new <see cref="global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage"/> and sets the default values.
         /// </summary>
-        public MemberMessageExchange()
+        public MemberMessage()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessageExchange"/></returns>
+        /// <returns>A <see cref="global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessageExchange CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessageExchange();
+            return new global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -78,9 +62,7 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "creationDate", n => { CreationDate = n.GetStringValue(); } },
-                { "question", n => { Question = n.GetObjectValue<global::EBay.OffersAndLeads.Generated.Feed.Models.Question>(global::EBay.OffersAndLeads.Generated.Feed.Models.Question.CreateFromDiscriminatorValue); } },
-                { "response", n => { Response = n.GetStringValue(); } },
+                { "memberMessageExchange", n => { MemberMessageExchange = n.GetCollectionOfObjectValues<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessageExchange>(global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessageExchange.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
         /// <summary>
@@ -90,9 +72,7 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("creationDate", CreationDate);
-            writer.WriteObjectValue<global::EBay.OffersAndLeads.Generated.Feed.Models.Question>("question", Question);
-            writer.WriteStringValue("response", Response);
+            writer.WriteCollectionOfObjectValues<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessageExchange>("memberMessageExchange", MemberMessageExchange);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

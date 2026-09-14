@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 namespace EBay.OffersAndLeads.Exceptions;
 
 public class SdkException : Exception
@@ -35,8 +34,6 @@ public sealed class GraphQLException : SdkException
     public string[] Errors { get; }
 
     public GraphQLException(string[] errors)
-        : base(string.Join("; ", errors))
-    {
-        Errors = errors;
-    }
+        : base($"GraphQL errors: {string.Join("; ", errors)}")
+        => Errors = errors;
 }

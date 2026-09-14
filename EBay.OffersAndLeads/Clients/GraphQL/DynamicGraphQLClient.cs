@@ -12,25 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EBay.OffersAndLeads.Configuration;
 using EBay.OffersAndLeads.Exceptions;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EBay.OffersAndLeads.Clients.GraphQL;
 
 internal sealed class DynamicGraphQLClient
 {
-    private readonly HttpClient _httpClient;
+    private readonly HttpClient _http;
     private readonly OffersAndLeadsConfiguration _config;
     private readonly ITokenContext _tokenContext;
 
-    internal DynamicGraphQLClient(HttpClient httpClient, OffersAndLeadsConfiguration config, ITokenContext tokenContext)
+    private static readonly JsonSerializerOptions JsonOpts = new()
     {
-        _httpClient = httpClient;
+        PropertyNameCaseInsensitive = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    };
+
+    internal DynamicGraphQLClient(HttpClient http, OffersAndLeadsConfiguration config, ITokenContext tokenContext)
+    {
+        _http = http;
         _config = config;
         _tokenContext = tokenContext;
     }
@@ -51,15 +58,14 @@ internal sealed class DynamicGraphQLClient
             ?? throw new InvalidOperationException(
                 "No access token available. Pass an accessToken per call or set OffersAndLeadsConfiguration.AccessToken.");
 
-        var body = JsonSerializer.Serialize(new { query, variables });
-        var req = new HttpRequestMessage(HttpMethod.Post, _config.GraphQLBaseUrl)
-        {
-            Content = new StringContent(body, Encoding.UTF8, "application/json")
-        };
+        using var req = new HttpRequestMessage(HttpMethod.Post, _config.GraphQLBaseUrl);
         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        req.Content = new StringContent(
+            JsonSerializer.Serialize(new { query, variables }, JsonOpts),
+            Encoding.UTF8, "application/json");
 
-        var resp = await _httpClient.SendAsync(req, ct);
-        var responseBody = await resp.Content.ReadAsStringAsync(ct);
+        using var resp = await _http.SendAsync(req, ct).ConfigureAwait(false);
+        var body = await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
 
         if (_config.DiagnosticLogging && !resp.IsSuccessStatusCode)
         {
@@ -71,16 +77,21 @@ internal sealed class DynamicGraphQLClient
             throw new UnauthorizedException();
 
         if (!resp.IsSuccessStatusCode)
-            throw new GraphQLException([$"HTTP {(int)resp.StatusCode}: {responseBody}"]);
+            throw new GraphQLException([$"HTTP {(int)resp.StatusCode}: {body}"]);
 
-        var doc = JsonDocument.Parse(responseBody);
-        if (doc.RootElement.TryGetProperty("errors", out var errs) && errs.GetArrayLength() > 0)
+        var doc = JsonDocument.Parse(body);
+
+        if (doc.RootElement.TryGetProperty("errors", out var errs)
+            && errs.ValueKind == JsonValueKind.Array
+            && errs.GetArrayLength() > 0)
         {
             var msgs = errs.EnumerateArray()
-                .Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "unknown" : "unknown")
+                .Select(e => e.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "")
                 .ToArray();
+            doc.Dispose();
             throw new GraphQLException(msgs);
         }
+
         return doc;
     }
 }

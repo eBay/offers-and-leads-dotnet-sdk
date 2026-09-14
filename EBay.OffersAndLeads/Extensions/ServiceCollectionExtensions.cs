@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+using EBay.OffersAndLeads;
 using EBay.OffersAndLeads.Clients.GraphQL;
-using EBay.OffersAndLeads.Clients.Rest;
 using EBay.OffersAndLeads.Configuration;
 using EBay.OffersAndLeads.Generated.GraphQL;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,42 +29,43 @@ public static class ServiceCollectionExtensions
         services.AddSingleton(config);
         services.AddSingleton<ITokenContext, AsyncLocalTokenContext>();
 
-        // StrawberryShake: register generated client
         services.AddOffersAndLeadsGraphQLClient();
-
-        // Wire auth into the named HTTP client that StrawberryShake uses
         services.AddTransient<BearerTokenHandler>();
         services
-            .AddHttpClient("OffersAndLeadsGraphQLClient", client =>
+            .AddHttpClient(OffersAndLeadsClient.GraphQLClientName, client =>
                 client.BaseAddress = new Uri(config.GraphQLBaseUrl))
+            .ConfigureHttpClient(c => c.Timeout = config.HttpTimeout)
             .AddHttpMessageHandler<BearerTokenHandler>()
-            .AddHttpMessageHandler(_ => new GraphQLHttpHandler(config))
-            .ConfigureHttpClient(c => c.Timeout = config.HttpTimeout);
-
-        // Dynamic escape hatch
+            .AddHttpMessageHandler(_ => new GraphQLHttpHandler(config));
         services.AddScoped<DynamicGraphQLClient>(sp =>
             new DynamicGraphQLClient(
-                sp.GetRequiredService<IHttpClientFactory>().CreateClient("OffersAndLeadsGraphQLClient"),
-                config,
-                sp.GetRequiredService<ITokenContext>()));
-
-        // Named HTTP client for the REST (Kiota) path — wires DiagnosticLoggingHandler into the DI pipeline
-        services.AddHttpClient(nameof(OffersAndLeadsClient))
-            .AddHttpMessageHandler(sp => new DiagnosticLoggingHandler(sp.GetRequiredService<OffersAndLeadsConfiguration>()))
-            .ConfigureHttpClient(c => c.Timeout = config.HttpTimeout);
-
-        // Register facade
-        services.AddScoped<OffersAndLeadsClient>(sp =>
-            new OffersAndLeadsClient(
+                sp.GetRequiredService<IHttpClientFactory>().CreateClient(OffersAndLeadsClient.GraphQLClientName),
                 sp.GetRequiredService<OffersAndLeadsConfiguration>(),
-                sp.GetRequiredService<IHttpClientFactory>().CreateClient(nameof(OffersAndLeadsClient)),
-                sp.GetRequiredService<IOffersAndLeadsGraphQLClient>(),
                 sp.GetRequiredService<ITokenContext>()));
 
-        // Register sub-clients for direct injection
+        foreach (var endpoint in OffersAndLeadsClient.RestEndpointNames)
+        {
+            var id = endpoint.ApiId;
+            services.AddHttpClient(endpoint.HttpClientName, (sp, c) =>
+                    c.BaseAddress = new Uri(sp.GetRequiredService<OffersAndLeadsConfiguration>().RestBaseUrl(id)))
+                .ConfigureHttpClient((sp, c) =>
+                    c.Timeout = sp.GetRequiredService<OffersAndLeadsConfiguration>().HttpTimeout)
+                .AddHttpMessageHandler(sp =>
+                    new DiagnosticLoggingHandler(sp.GetRequiredService<OffersAndLeadsConfiguration>()));
+        }
+
+        services.AddScoped<OffersAndLeadsClient>(sp =>
+        {
+            var factory = sp.GetRequiredService<IHttpClientFactory>();
+            return new OffersAndLeadsClient(
+                sp.GetRequiredService<OffersAndLeadsConfiguration>(),
+                factory,
+                sp.GetRequiredService<IOffersAndLeadsGraphQLClient>(),
+                sp.GetRequiredService<ITokenContext>());
+        });
+
         services.AddScoped(sp => sp.GetRequiredService<OffersAndLeadsClient>().ClassifiedLeads);
         services.AddScoped(sp => sp.GetRequiredService<OffersAndLeadsClient>().GraphQL);
-
         return services;
     }
 }

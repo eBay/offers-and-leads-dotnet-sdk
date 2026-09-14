@@ -19,7 +19,7 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
-namespace EBay.OffersAndLeads.Generated.Feed.Models
+namespace EBay.OffersAndLeads.Generated.ClassifiedLeads.Models
 {
     /// <summary>
     /// This type provides classified lead responses including any contact information that prospective buyers have submitted.
@@ -40,10 +40,10 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         /// <summary>This type consists of contact information for the prospective buyer.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::EBay.OffersAndLeads.Generated.Feed.Models.ContactInformation? ContactInformation { get; set; }
+        public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ContactInformation? ContactInformation { get; set; }
 #nullable restore
 #else
-        public global::EBay.OffersAndLeads.Generated.Feed.Models.ContactInformation ContactInformation { get; set; }
+        public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ContactInformation ContactInformation { get; set; }
 #endif
         /// <summary>Email address for the prospective buyer, if that buyer was logged in to eBay.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -66,10 +66,10 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         /// <summary>This type returns the amount charged for the lead service.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::EBay.OffersAndLeads.Generated.Feed.Models.LeadFee? LeadFee { get; set; }
+        public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee? LeadFee { get; set; }
 #nullable restore
 #else
-        public global::EBay.OffersAndLeads.Generated.Feed.Models.LeadFee LeadFee { get; set; }
+        public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee LeadFee { get; set; }
 #endif
         /// <summary>The enumeration value in this field indicates whether or not the seller has responded to the lead, or if this is new. For implementation help, refer to &lt;a href=&apos;https://developer.ebay.com/api-docs/sell/leads/types/api:LeadStatus&apos;&gt;eBay API documentation&lt;/a&gt;</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -82,10 +82,10 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         /// <summary>This type defines the field containing any mail message content shared between the seller and prospective buyer.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessage? MemberMessage { get; set; }
+        public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage? MemberMessage { get; set; }
 #nullable restore
 #else
-        public global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessage MemberMessage { get; set; }
+        public global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage MemberMessage { get; set; }
 #endif
         /// <summary>Date and time (in GMT) that the lead was submitted.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -128,7 +128,7 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         public string UserId { get; set; }
 #endif
         /// <summary>
-        /// Instantiates a new <see cref="global::EBay.OffersAndLeads.Generated.Feed.Models.ClassifiedLeadResponses"/> and sets the default values.
+        /// Instantiates a new <see cref="global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ClassifiedLeadResponses"/> and sets the default values.
         /// </summary>
         public ClassifiedLeadResponses()
         {
@@ -137,12 +137,12 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::EBay.OffersAndLeads.Generated.Feed.Models.ClassifiedLeadResponses"/></returns>
+        /// <returns>A <see cref="global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ClassifiedLeadResponses"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::EBay.OffersAndLeads.Generated.Feed.Models.ClassifiedLeadResponses CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ClassifiedLeadResponses CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::EBay.OffersAndLeads.Generated.Feed.Models.ClassifiedLeadResponses();
+            return new global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ClassifiedLeadResponses();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -153,13 +153,13 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "additionalInformation", n => { AdditionalInformation = n.GetStringValue(); } },
-                { "contactInformation", n => { ContactInformation = n.GetObjectValue<global::EBay.OffersAndLeads.Generated.Feed.Models.ContactInformation>(global::EBay.OffersAndLeads.Generated.Feed.Models.ContactInformation.CreateFromDiscriminatorValue); } },
+                { "contactInformation", n => { ContactInformation = n.GetObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ContactInformation>(global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ContactInformation.CreateFromDiscriminatorValue); } },
                 { "email", n => { Email = n.GetStringValue(); } },
                 { "externalEmail", n => { ExternalEmail = n.GetStringValue(); } },
                 { "financingAnswer", n => { FinancingAnswer = n.GetBoolValue(); } },
-                { "leadFee", n => { LeadFee = n.GetObjectValue<global::EBay.OffersAndLeads.Generated.Feed.Models.LeadFee>(global::EBay.OffersAndLeads.Generated.Feed.Models.LeadFee.CreateFromDiscriminatorValue); } },
+                { "leadFee", n => { LeadFee = n.GetObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee>(global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee.CreateFromDiscriminatorValue); } },
                 { "leadStatus", n => { LeadStatus = n.GetStringValue(); } },
-                { "memberMessage", n => { MemberMessage = n.GetObjectValue<global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessage>(global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessage.CreateFromDiscriminatorValue); } },
+                { "memberMessage", n => { MemberMessage = n.GetObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage>(global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage.CreateFromDiscriminatorValue); } },
                 { "submittedTime", n => { SubmittedTime = n.GetStringValue(); } },
                 { "tradeInMake", n => { TradeInMake = n.GetStringValue(); } },
                 { "tradeInModel", n => { TradeInModel = n.GetStringValue(); } },
@@ -175,13 +175,13 @@ namespace EBay.OffersAndLeads.Generated.Feed.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("additionalInformation", AdditionalInformation);
-            writer.WriteObjectValue<global::EBay.OffersAndLeads.Generated.Feed.Models.ContactInformation>("contactInformation", ContactInformation);
+            writer.WriteObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.ContactInformation>("contactInformation", ContactInformation);
             writer.WriteStringValue("email", Email);
             writer.WriteStringValue("externalEmail", ExternalEmail);
             writer.WriteBoolValue("financingAnswer", FinancingAnswer);
-            writer.WriteObjectValue<global::EBay.OffersAndLeads.Generated.Feed.Models.LeadFee>("leadFee", LeadFee);
+            writer.WriteObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.LeadFee>("leadFee", LeadFee);
             writer.WriteStringValue("leadStatus", LeadStatus);
-            writer.WriteObjectValue<global::EBay.OffersAndLeads.Generated.Feed.Models.MemberMessage>("memberMessage", MemberMessage);
+            writer.WriteObjectValue<global::EBay.OffersAndLeads.Generated.ClassifiedLeads.Models.MemberMessage>("memberMessage", MemberMessage);
             writer.WriteStringValue("submittedTime", SubmittedTime);
             writer.WriteStringValue("tradeInMake", TradeInMake);
             writer.WriteStringValue("tradeInModel", TradeInModel);
