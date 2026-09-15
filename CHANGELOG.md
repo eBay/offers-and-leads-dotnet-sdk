@@ -1,8 +1,14 @@
 # ChangeLog
 
-## 1.0.0 (09/14/2026)
+## 0.2.0 (09/14/2026)
 
-**Breaking changes**
-- The following operations changed signature on `ClassifiedLeadsClient`:
-  - `GetAllClassifiedLeadsAsync`: `(ClassifiedLeadsFilter?, string?, RequestOptions?, CancellationToken)` → `(string?, string?, string?, string?, string?, string?, RequestOptions?, CancellationToken)`
-  - `GetClassifiedLeadsByItemIdAsync`: `(string, ClassifiedLeadsFilter?, string?, RequestOptions?, CancellationToken)` → `(string, string?, string?, string?, string?, string?, string?, RequestOptions?, CancellationToken)`
+### Breaking changes
+
+#### Changed signatures
+
+`ClassifiedLeadsClient`:
+
+| Operation | Previous parameters | Current parameters |
+| --- | --- | --- |
+| `GetAllClassifiedLeadsAsync` | `(ClassifiedLeadsFilter? filter, string? accessToken, RequestOptions? requestOptions, CancellationToken ct)` | `(string? endTime, string? includeMessages, string? startTime, string? status, string? acceptEncoding, string? accessToken, RequestOptions? requestOptions, CancellationToken ct)` |
+| `GetClassifiedLeadsByItemIdAsync` | `(string itemId, ClassifiedLeadsFilter? filter, string? accessToken, RequestOptions? requestOptions, CancellationToken ct)` | `(string itemId, string? endTime, string? includeMessages, string? startTime, string? status, string? acceptEncoding, string? accessToken, RequestOptions? requestOptions, CancellationToken ct)` |
