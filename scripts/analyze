@@ -26,7 +26,14 @@ if [ "${#projects[@]}" -ne 1 ]; then
 fi
 
 project="${projects[0]}"
-if [ ! -f "${project%/*}/obj/project.assets.json" ]; then
-  dotnet restore "$project"
+framework="${1:-}"
+restore_args=()
+build_args=(-p:EBayLint=true --no-incremental)
+if [ -n "${framework}" ]; then
+  restore_args+=(-p:TargetFramework="${framework}")
+  build_args=(-f "${framework}" "${build_args[@]}")
 fi
-dotnet build "$project" -p:EBayLint=true --no-incremental
+if [ ! -f "${project%/*}/obj/project.assets.json" ]; then
+  dotnet restore "$project" "${restore_args[@]}"
+fi
+dotnet build "$project" "${build_args[@]}"

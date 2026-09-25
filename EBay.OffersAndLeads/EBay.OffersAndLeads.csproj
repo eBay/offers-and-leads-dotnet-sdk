@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
@@ -9,7 +9,7 @@
     <AssemblyName>EBay.OffersAndLeads</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>EBay.OffersAndLeads</PackageId>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>eBay</Authors>
     <Description>Offers and Leads SDK for eBay Feed API and GraphQL Offer operations</Description>
     <PackageProjectUrl>https://github.com/eBay/offers-and-leads-dotnet-sdk</PackageProjectUrl>

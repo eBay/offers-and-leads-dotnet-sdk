@@ -11,8 +11,12 @@ concurrency:
 
 jobs:
   validate:
-    name: validate
+    name: validate (${{ matrix.framework }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        framework: [net8.0, net9.0, net10.0]
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
         with:
@@ -20,7 +24,10 @@ jobs:
 
       - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
 
       - name: Resolve library project
         id: project
@@ -37,10 +44,10 @@ jobs:
           echo "path=${projects[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Restore
-        run: dotnet restore "${{ steps.project.outputs.path }}"
+        run: dotnet restore "${{ steps.project.outputs.path }}" -p:TargetFramework=${{ matrix.framework }}
 
       - name: Build
-        run: dotnet build "${{ steps.project.outputs.path }}" --no-restore
+        run: dotnet build "${{ steps.project.outputs.path }}" --no-restore -f ${{ matrix.framework }}
 
       - name: Static analysis
-        run: ./scripts/analyze
+        run: ./scripts/analyze ${{ matrix.framework }}
