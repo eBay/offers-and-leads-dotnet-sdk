@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Compile-only check: the SDK's public API must be usable from .NET Framework 4.7.2 projects
+    pinned to C# 7.3 (no nullable reference types, no init/required, no implicit usings).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../EBay.OffersAndLeads/EBay.OffersAndLeads.csproj" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+</Project>

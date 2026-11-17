@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        framework: [net8.0, net9.0, net10.0]
+        framework: [net472, net8.0, net9.0, net10.0]
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
         with:
@@ -51,3 +51,57 @@ jobs:
 
       - name: Static analysis
         run: ./scripts/analyze ${{ matrix.framework }}
+
+      # .NET Framework tests need Windows; the netfx job below runs them.
+      - name: Test
+        if: matrix.framework != 'net472'
+        run: dotnet test tests/EBay.OffersAndLeads.Tests/EBay.OffersAndLeads.Tests.csproj -f ${{ matrix.framework }}
+
+  # The jobs above test the dependency minimums (Directory.Build.props); this one the latest versions.
+  latest-dependencies:
+    name: test latest dependencies (${{ matrix.framework }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        framework: [net8.0, net9.0, net10.0]
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Test
+        run: >-
+          dotnet test tests/EBay.OffersAndLeads.Tests/EBay.OffersAndLeads.Tests.csproj -f ${{ matrix.framework }}
+          -p:KiotaVersion=1.* -p:DependencyInjectionVersion=10.* -p:SystemTextJsonVersion=10.*
+
+  netfx:
+    name: test (net472, windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Test (dependency minimums)
+        run: dotnet test tests/EBay.OffersAndLeads.Tests/EBay.OffersAndLeads.Tests.csproj -f net472
+
+      - name: Test (latest dependencies)
+        run: >-
+          dotnet test tests/EBay.OffersAndLeads.Tests/EBay.OffersAndLeads.Tests.csproj -f net472
+          -p:KiotaVersion=1.* -p:DependencyInjectionVersion=10.* -p:SystemTextJsonVersion=10.*
+
+      # .NET Framework projects often compile with C# 7.3; the public API must stay usable from it.
+      - name: C# 7.3 consumer compile check
+        run: dotnet build tests/EBay.OffersAndLeads.CSharp73/EBay.OffersAndLeads.CSharp73.csproj
