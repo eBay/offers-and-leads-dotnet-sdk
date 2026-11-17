@@ -107,13 +107,7 @@ namespace EBay.OffersAndLeads.Generated.GraphQL
 
         internal void WriteJson(global::System.Text.Json.Utf8JsonWriter writer)
         {
-            // An input object with no fields set is sent as null, not {}.
-            if (!(_set_itemId || _set_message || _set_offerId || _set_proposedPrice || _set_quantity))
-            {
-                writer.WriteNullValue();
-                return;
-            }
-
+            // Always an object, {} when no field is set. Only a null reference to the input is sent as null.
             writer.WriteStartObject();
             if (_set_itemId)
             {
