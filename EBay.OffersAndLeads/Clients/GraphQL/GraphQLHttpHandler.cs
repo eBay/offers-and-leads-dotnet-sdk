@@ -18,9 +18,9 @@ using System.Text;
 namespace EBay.OffersAndLeads.Clients.GraphQL;
 
 /// <summary>
-/// Delegating handler for the StrawberryShake GraphQL HTTP pipeline.
-/// Ensures non-2xx responses throw <see cref="HttpRequestException"/> (with status code) instead of
-/// silently yielding zero results, and logs requests/responses when DiagnosticLogging is enabled.
+/// Delegating handler for the GraphQL HTTP pipeline. Logs requests/responses when DiagnosticLogging
+/// is enabled. Status codes are mapped by <see cref="GraphQLExecutor"/> and DynamicGraphQLClient so
+/// typed operations behave the same with and without DI, on every target framework.
 /// </summary>
 internal sealed class GraphQLHttpHandler(OffersAndLeadsConfiguration config) : DelegatingHandler
 {
@@ -37,7 +37,11 @@ internal sealed class GraphQLHttpHandler(OffersAndLeadsConfiguration config) : D
 
         if (config.DiagnosticLogging)
         {
+#if NETFRAMEWORK
+            var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+#else
             var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+#endif
             Console.Error.WriteLine($"[SDK GraphQL] Body: {body}");
             var bytes = Encoding.UTF8.GetBytes(body);
             var replaced = new ByteArrayContent(bytes);
@@ -45,9 +49,6 @@ internal sealed class GraphQLHttpHandler(OffersAndLeadsConfiguration config) : D
                 replaced.Headers.ContentType = contentType;
             response.Content = replaced;
         }
-
-        if (!response.IsSuccessStatusCode)
-            response.EnsureSuccessStatusCode();
 
         return response;
     }

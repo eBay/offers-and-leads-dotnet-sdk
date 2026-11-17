@@ -13,59 +13,24 @@
 // limitations under the License.
 
 using EBay.OffersAndLeads;
-using EBay.OffersAndLeads.Clients.GraphQL;
 using EBay.OffersAndLeads.Configuration;
-using EBay.OffersAndLeads.Generated.GraphQL;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EBay.OffersAndLeads.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Registers <paramref name="config"/> and a singleton <see cref="OffersAndLeadsClient"/>. The client
+    /// owns its HTTP connections and is disposed with the container. Reach the individual APIs through
+    /// its properties.
+    /// </summary>
     public static IServiceCollection AddOffersAndLeadsSdk(
         this IServiceCollection services,
         OffersAndLeadsConfiguration config)
     {
         services.AddSingleton(config);
-        services.AddSingleton<ITokenContext, AsyncLocalTokenContext>();
-
-        services.AddOffersAndLeadsGraphQLClient();
-        services.AddTransient<BearerTokenHandler>();
-        services
-            .AddHttpClient(OffersAndLeadsClient.GraphQLClientName, client =>
-                client.BaseAddress = new Uri(config.GraphQLBaseUrl))
-            .ConfigureHttpClient(c => c.Timeout = config.HttpTimeout)
-            .AddHttpMessageHandler<BearerTokenHandler>()
-            .AddHttpMessageHandler(_ => new GraphQLHttpHandler(config));
-        services.AddScoped<DynamicGraphQLClient>(sp =>
-            new DynamicGraphQLClient(
-                sp.GetRequiredService<IHttpClientFactory>().CreateClient(OffersAndLeadsClient.GraphQLClientName),
-                sp.GetRequiredService<OffersAndLeadsConfiguration>(),
-                sp.GetRequiredService<ITokenContext>()));
-
-        foreach (var endpoint in OffersAndLeadsClient.RestEndpointNames)
-        {
-            var id = endpoint.ApiId;
-            services.AddHttpClient(endpoint.HttpClientName, (sp, c) =>
-                    c.BaseAddress = new Uri(sp.GetRequiredService<OffersAndLeadsConfiguration>().RestBaseUrl(id)))
-                .ConfigureHttpClient((sp, c) =>
-                    c.Timeout = sp.GetRequiredService<OffersAndLeadsConfiguration>().HttpTimeout)
-                .AddHttpMessageHandler(sp =>
-                    new DiagnosticLoggingHandler(sp.GetRequiredService<OffersAndLeadsConfiguration>()));
-        }
-
-        services.AddScoped<OffersAndLeadsClient>(sp =>
-        {
-            var factory = sp.GetRequiredService<IHttpClientFactory>();
-            return new OffersAndLeadsClient(
-                sp.GetRequiredService<OffersAndLeadsConfiguration>(),
-                factory,
-                sp.GetRequiredService<IOffersAndLeadsGraphQLClient>(),
-                sp.GetRequiredService<ITokenContext>());
-        });
-
-        services.AddScoped(sp => sp.GetRequiredService<OffersAndLeadsClient>().ClassifiedLeads);
-        services.AddScoped(sp => sp.GetRequiredService<OffersAndLeadsClient>().GraphQL);
+        services.AddSingleton(_ => new OffersAndLeadsClient(config));
         return services;
     }
 }

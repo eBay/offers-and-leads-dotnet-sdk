@@ -24,7 +24,7 @@ internal sealed class AsyncLocalTokenContext : ITokenContext
     {
         var previous = _current.Value;
         _current.Value = token;
-        try { return await action(); }
+        try { return await action().ConfigureAwait(false); }
         finally { _current.Value = previous; }
     }
 
@@ -32,7 +32,7 @@ internal sealed class AsyncLocalTokenContext : ITokenContext
     {
         var previous = _current.Value;
         _current.Value = token;
-        try { await action(); }
+        try { await action().ConfigureAwait(false); }
         finally { _current.Value = previous; }
     }
 }

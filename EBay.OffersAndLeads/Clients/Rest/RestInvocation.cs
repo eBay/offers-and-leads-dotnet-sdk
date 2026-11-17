@@ -34,7 +34,7 @@ internal static class RestInvocation
     {
         try
         {
-            return await tokenContext.RunAsync(accessToken, op);
+            return await tokenContext.RunAsync(accessToken, op).ConfigureAwait(false);
         }
         catch (ApiException ex) when (ex.ResponseStatusCode == (int)HttpStatusCode.Unauthorized)
         {
@@ -49,7 +49,7 @@ internal static class RestInvocation
     {
         try
         {
-            await tokenContext.RunAsync(accessToken, op);
+            await tokenContext.RunAsync(accessToken, op).ConfigureAwait(false);
         }
         catch (ApiException ex) when (ex.ResponseStatusCode == (int)HttpStatusCode.Unauthorized)
         {
@@ -62,17 +62,17 @@ internal static class RestInvocation
         OffersAndLeadsConfiguration config,
         RequestOptions? callOptions)
     {
-        foreach (var (k, v) in config.DefaultRequestOptions.Headers)
+        foreach (var header in config.DefaultRequestOptions.Headers)
         {
-            headers.TryAdd(k, v);
+            headers.TryAdd(header.Key, header.Value);
         }
         if (callOptions is null)
         {
             return;
         }
-        foreach (var (k, v) in callOptions.Headers)
+        foreach (var header in callOptions.Headers)
         {
-            headers[k] = new[] { v };
+            headers[header.Key] = new[] { header.Value };
         }
     }
 
@@ -85,8 +85,8 @@ internal static class RestInvocation
         ParsableFactory<T> responseFactory,
         CancellationToken ct) where T : IParsable
     {
-        await AttachMultipartFileAsync(requestInfo, partName, fileContent, fileName, ct);
-        return await adapter.SendAsync(requestInfo, responseFactory, default, ct);
+        await AttachMultipartFileAsync(requestInfo, partName, fileContent, fileName, ct).ConfigureAwait(false);
+        return await adapter.SendAsync(requestInfo, responseFactory, default, ct).ConfigureAwait(false);
     }
 
     internal static async Task SendMultipartFileAsync(
@@ -97,8 +97,8 @@ internal static class RestInvocation
         string fileName,
         CancellationToken ct)
     {
-        await AttachMultipartFileAsync(requestInfo, partName, fileContent, fileName, ct);
-        await adapter.SendNoContentAsync(requestInfo, default, ct);
+        await AttachMultipartFileAsync(requestInfo, partName, fileContent, fileName, ct).ConfigureAwait(false);
+        await adapter.SendNoContentAsync(requestInfo, default, ct).ConfigureAwait(false);
     }
 
     private static async Task AttachMultipartFileAsync(
@@ -108,10 +108,17 @@ internal static class RestInvocation
         string fileName,
         CancellationToken ct)
     {
-        using var multipart = new MultipartFormDataContent();
+        // Not disposed: disposing the multipart content would dispose its StreamContent and close
+        // fileContent, which belongs to the caller. It holds nothing else that needs disposing.
+        var multipart = new MultipartFormDataContent();
         multipart.Add(new StreamContent(fileContent), partName, fileName);
         var memStream = new MemoryStream();
-        await multipart.CopyToAsync(memStream, ct);
+#if NETFRAMEWORK
+        ct.ThrowIfCancellationRequested();
+        await multipart.CopyToAsync(memStream).ConfigureAwait(false);
+#else
+        await multipart.CopyToAsync(memStream, ct).ConfigureAwait(false);
+#endif
         memStream.Position = 0;
         requestInfo.SetStreamContent(memStream, multipart.Headers.ContentType!.ToString());
     }

@@ -27,7 +27,7 @@ internal sealed class KiotaAuthProvider : IAccessTokenProvider
     {
         _config = config;
         _tokenContext = tokenContext;
-        AllowedHostsValidator = new AllowedHostsValidator(OffersAndLeadsConfiguration.AllowedHosts);
+        AllowedHostsValidator = new AllowedHostsValidator(config.TrustedHosts());
     }
 
     public Task<string> GetAuthorizationTokenAsync(
@@ -35,6 +35,9 @@ internal sealed class KiotaAuthProvider : IAccessTokenProvider
         Dictionary<string, object>? additionalAuthenticationContext = null,
         CancellationToken cancellationToken = default)
     {
+        // Never hand the token to a host outside the trusted list.
+        if (!_config.IsTrustedHost(uri))
+            return Task.FromResult(string.Empty);
         var token = _tokenContext.Current ?? _config.AccessToken;
         if (token is null)
             throw new InvalidOperationException(
