@@ -4,9 +4,11 @@ A production-ready .NET SDK for eBay Classified Leads and Offer APIs, providing 
 
 ## Features
 
+- **Target frameworks**: .NET Framework 4.7.2, .NET 8, .NET 9 and .NET 10
 - **Classified Leads API**: Retrieve buyer leads for classified listings (2 operations)
   - Get all classified leads
   - Get classified leads by item ID
+- **Negotiation API**: Find items with interested buyers and send them offers (2 operations, moved from the Communication SDK in 0.4.0)
 - **Offer API (GraphQL)**: Manage buyer offers and negotiation history (3 operations)
   - Accept offers
   - Decline offers
@@ -87,52 +89,23 @@ var customResult = await client.GraphQL.ExecuteRawUnsafeAsync(@"
 
 ### 2. Dependency Injection (ASP.NET Core)
 
-```csharp
-using OffersAndLeads.Extensions;
-using OffersAndLeads.Configuration;
+`AddOffersAndLeadsSdk` registers the configuration and one shared `OffersAndLeadsClient` (a singleton that owns its HTTP connections and is disposed with the container). Inject the client and use its properties for the individual APIs:
 
-// In Program.cs or Startup.cs
+```csharp
+using EBay.OffersAndLeads;
+using EBay.OffersAndLeads.Configuration;
+using EBay.OffersAndLeads.Extensions;
+
 builder.Services.AddOffersAndLeadsSdk(new OffersAndLeadsConfiguration
 {
-    AccessToken = "your_bearer_token"
+    AccessToken = builder.Configuration["EBay:AccessToken"]
 });
 
-// Inject the SDK or sub-clients
-public class LeadsController : ControllerBase
-{
-    private readonly OffersAndLeadsClient _sdk;
-    private readonly ClassifiedLeadsClient _leads;
-
-    public LeadsController(
-        OffersAndLeadsClient sdk,
-        ClassifiedLeadsClient leads)
-    {
-        _sdk = sdk;
-        _leads = leads;
-    }
-
-    [HttpGet("leads")]
-    public async Task<IActionResult> GetAllLeads()
-    {
-        var leads = await _leads.GetAllClassifiedLeadsAsync();
-        return Ok(leads);
-    }
-
-    [HttpGet("leads/{itemId}")]
-    public async Task<IActionResult> GetItemLeads(string itemId)
-    {
-        var leads = await _leads.GetClassifiedLeadsByItemIdAsync(itemId);
-        return Ok(leads);
-    }
-
-    [HttpPost("offers/{offerId}/accept")]
-    public async Task<IActionResult> AcceptOffer(string offerId)
-    {
-        var result = await _sdk.GraphQL.AcceptOfferAsync(offerId);
-        return Ok(result);
-    }
-}
+app.MapGet("/example", async (OffersAndLeadsClient sdk) =>
+    Results.Ok(await sdk.ClassifiedLeads.GetAllClassifiedLeadsAsync()));
 ```
+
+To route requests through your own handler (proxy, client certificates, a test double), pass it to the constructor: `new OffersAndLeadsClient(config, handler)`. The handler is shared by all APIs and is not disposed by the client.
 
 ## API Operations
 
@@ -156,6 +129,15 @@ Retrieves buyer leads for a specific classified listing item.
 - Contact details
 - Lead creation date
 - Item information
+
+### Negotiation API (REST)
+
+Moved here from the Communication SDK in 0.4.0.
+
+```csharp
+var eligible = await client.Negotiation.FindEligibleItemsAsync("EBAY_US", limit: 10);
+await client.Negotiation.SendOfferToInterestedBuyersAsync("EBAY_US", createOffersRequest);
+```
 
 ### Offer API (GraphQL)
 
@@ -232,6 +214,25 @@ var variables = new { offerId = "offer123", amount = 99.99 };
 var result = await client.GraphQL.ExecuteRawUnsafeAsync(mutation, variables);
 ```
 
+## Trusted hosts and sandbox
+
+The access token is only sent to trusted hosts: the eBay hosts in `OffersAndLeadsConfiguration.DefaultAllowedHosts` (production and their `*.sandbox.ebay.com` counterparts) plus any you add to `AllowedHosts`. The sandbox needs no extra configuration:
+
+```csharp
+var config = new OffersAndLeadsConfiguration
+{
+    AccessToken = "...",
+    ClassifiedLeadsBaseUrl = "https://apiz.sandbox.ebay.com/sell/leads/v1",
+};
+```
+
+Any other host, for example a proxy, has to be added explicitly; the client constructor throws `InvalidOperationException` otherwise:
+
+```csharp
+config.ClassifiedLeadsBaseUrl = "https://ebay-proxy.example.com/sell/leads/v1";
+config.AllowedHosts.Add("ebay-proxy.example.com");
+```
+
 ## Error Handling
 
 ```csharp
@@ -277,7 +278,8 @@ dotnet build OffersAndLeadsSdk/OffersAndLeadsSdk.csproj
 
 | Property | Default | Description |
 |----------|---------|-------------|
-| `LeadsBaseUrl` | `https://apiz.ebay.com/sell/leads/v1` | Base URL for the Classified Leads REST API |
+| `NegotiationBaseUrl` | `https://api.ebay.com/sell/negotiation/v1` | Base URL for the Negotiation REST API |
+| `ClassifiedLeadsBaseUrl` | `https://apiz.ebay.com/sell/leads/v1` | Base URL for the Classified Leads REST API |
 | `GraphQLBaseUrl` | `https://api.ebay.com/graphql` | GraphQL API endpoint for Offer operations |
 | `AccessToken` | `null` | Default bearer token used when no per-call token is provided |
 
@@ -311,6 +313,7 @@ Ideal for sellers who want to:
 ### Prerequisites
 
 - .NET 10 SDK, plus the .NET 8 and .NET 9 SDKs so every target framework can build
+- `net472` builds on any OS (reference assemblies come from NuGet); its tests run on Windows only
 - Kiota CLI tool (auto-installed via dotnet tools)
 
 ### Building
@@ -327,9 +330,9 @@ dotnet pack OffersAndLeadsSdk/OffersAndLeadsSdk.csproj
 
 ## Dependencies
 
-- **Microsoft.Kiota.Bundle**: REST client generation and runtime
-- **Microsoft.Extensions.DependencyInjection.Abstractions**: DI support
-- **Microsoft.Extensions.Http**: HttpClient factory integration
+- **Microsoft.Kiota.Bundle** (>= 1.22.0): REST runtime
+- **Microsoft.Extensions.DependencyInjection.Abstractions** (>= 6.0.0): `AddOffersAndLeadsSdk` registration
+- **System.Text.Json** (>= 10.0.0, .NET Framework only): GraphQL request and response serialization
 
 ## License
 
