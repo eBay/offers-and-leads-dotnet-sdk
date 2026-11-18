@@ -15,10 +15,8 @@
 using EBay.OffersAndLeads.Clients.GraphQL;
 using EBay.OffersAndLeads.Clients.Rest;
 using EBay.OffersAndLeads.Configuration;
-using EBay.OffersAndLeads.Extensions;
 using EBay.OffersAndLeads.Generated.ClassifiedLeads;
-using EBay.OffersAndLeads.Generated.GraphQL;
-using Microsoft.Extensions.DependencyInjection;
+using EBay.OffersAndLeads.Generated.Negotiation;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using System.Collections.Generic;
@@ -27,85 +25,91 @@ using System.Net.Http;
 
 namespace EBay.OffersAndLeads;
 
+/// <summary>
+/// Entry point for the Offers and Leads APIs. The client owns its HTTP connections:
+/// create one per application (or register it with <c>AddOffersAndLeadsSdk</c>, which adds it
+/// as a singleton) and dispose it on shutdown. Reach the individual APIs through its properties.
+/// </summary>
 public class OffersAndLeadsClient : IDisposable
 {
-    internal const string ClassifiedLeadsClientName = "OffersAndLeadsClient.ClassifiedLeads";
-    internal const string GraphQLClientName = "OffersAndLeadsGraphQLClient";
-
     private readonly HttpClient[] _ownedClients;
 
     public ClassifiedLeadsClient ClassifiedLeads { get; private set; } = null!;
+    public NegotiationClient Negotiation { get; private set; } = null!;
 
     public OfferGraphQLClient GraphQL { get; }
 
-    /// <summary>
-    /// DI-friendly constructor. Named HttpClients come from <see cref="IHttpClientFactory"/>.
-    /// </summary>
-    internal OffersAndLeadsClient(
-        OffersAndLeadsConfiguration config,
-        IHttpClientFactory factory,
-        IOffersAndLeadsGraphQLClient graphQLClient,
-        ITokenContext tokenContext)
+    /// <summary>Creates a client with its own HTTP connections.</summary>
+    public OffersAndLeadsClient(OffersAndLeadsConfiguration config)
+        : this(config, CreateDefaultPrimaryHandler, disposeHandlers: true)
     {
-        _ownedClients = [];
-        var auth = new BaseBearerTokenAuthenticationProvider(new KiotaAuthProvider(config, tokenContext));
-        InitializeRestClients(auth, config, tokenContext, endpoint => factory.CreateClient(endpoint.HttpClientName));
-        GraphQL = new OfferGraphQLClient(
-            graphQLClient,
-            new DynamicGraphQLClient(factory.CreateClient(GraphQLClientName), config, tokenContext),
-            tokenContext);
     }
 
     /// <summary>
-    /// Standalone constructor for use outside DI (tests, scripts).
-    /// Creates its own HttpClients with DiagnosticLoggingHandler.
-    /// Typed GraphQL operations are unavailable; use GraphQL.ExecuteRawUnsafeAsync instead.
+    /// Creates a client that sends every request through <paramref name="primaryHandler"/>, for example to
+    /// configure a proxy or client certificates, or to substitute a test double. The handler is shared by
+    /// all APIs and is not disposed by this client.
     /// </summary>
-    public OffersAndLeadsClient(OffersAndLeadsConfiguration config)
+    public OffersAndLeadsClient(OffersAndLeadsConfiguration config, HttpMessageHandler primaryHandler)
+        : this(config, RequireHandler(primaryHandler), disposeHandlers: false)
     {
+    }
+
+    private OffersAndLeadsClient(
+        OffersAndLeadsConfiguration config,
+        Func<HttpMessageHandler> primaryHandler,
+        bool disposeHandlers)
+    {
+        config.ValidateTrustedHosts();
         var tokenContext = new AsyncLocalTokenContext();
         var auth = new BaseBearerTokenAuthenticationProvider(new KiotaAuthProvider(config, tokenContext));
         var owned = new List<HttpClient>();
-        InitializeRestClients(auth, config, tokenContext, endpoint =>
+        HttpClient Build(DelegatingHandler logging, string baseUrl)
         {
-            var client = BuildStandaloneHttpClient(config, endpoint.BaseUrl);
+            logging.InnerHandler = primaryHandler();
+            var client = new HttpClient(logging, disposeHandlers)
+            {
+                BaseAddress = new Uri(baseUrl),
+                Timeout = config.HttpTimeout
+            };
             owned.Add(client);
             return client;
-        });
-        var graphQLHttp = BuildStandaloneHttpClient(config, config.GraphQLBaseUrl);
-        owned.Add(graphQLHttp);
-        _ownedClients = [.. owned];
+        }
+        InitializeRestClients(auth, config, tokenContext, endpoint => Build(new DiagnosticLoggingHandler(config), endpoint.BaseUrl));
+        var graphQLHttp = Build(new GraphQLHttpHandler(config), config.GraphQLBaseUrl);
         GraphQL = new OfferGraphQLClient(
-            BuildStandaloneGqlClient(config, tokenContext),
+            new GraphQLExecutor(graphQLHttp, config, tokenContext),
             new DynamicGraphQLClient(graphQLHttp, config, tokenContext),
             tokenContext);
+        _ownedClients = [.. owned];
     }
 
-    private static IOffersAndLeadsGraphQLClient BuildStandaloneGqlClient(
-        OffersAndLeadsConfiguration config, ITokenContext tokenContext)
-    {
-        var services = new ServiceCollection();
-        services.AddOffersAndLeadsSdk(config);
-        services.AddSingleton<ITokenContext>(tokenContext);
-        return services.BuildServiceProvider().GetRequiredService<IOffersAndLeadsGraphQLClient>();
-    }
+    private static HttpMessageHandler CreateDefaultPrimaryHandler() =>
+#if NETFRAMEWORK
+        // .NET Framework defaults to 2 connections per host outside ASP.NET.
+        new HttpClientHandler { MaxConnectionsPerServer = 64 };
+#else
+        new SocketsHttpHandler { PooledConnectionLifetime = TimeSpan.FromMinutes(2) };
+#endif
 
-    private static HttpClient BuildStandaloneHttpClient(OffersAndLeadsConfiguration config, string baseUrl)
+    private static Func<HttpMessageHandler> RequireHandler(HttpMessageHandler primaryHandler)
     {
-        var handler = new DiagnosticLoggingHandler(config)
+#if NETFRAMEWORK
+        if (primaryHandler is null)
         {
-            InnerHandler = new SocketsHttpHandler { PooledConnectionLifetime = TimeSpan.FromMinutes(2) }
-        };
-        return new HttpClient(handler) { BaseAddress = new Uri(baseUrl), Timeout = config.HttpTimeout };
+            throw new ArgumentNullException(nameof(primaryHandler));
+        }
+#else
+        ArgumentNullException.ThrowIfNull(primaryHandler);
+#endif
+        return () => primaryHandler;
     }
-
-    internal static IReadOnlyList<(string ApiId, string HttpClientName)> RestEndpointNames { get; } =
-    [
-        ("classified-leads", ClassifiedLeadsClientName)
-    ];
 
     internal static IReadOnlyList<RestEndpoint> RestEndpoints(OffersAndLeadsConfiguration config) =>
-        [.. RestEndpointNames.Select(name => new RestEndpoint(name.ApiId, name.HttpClientName, config.RestBaseUrl(name.ApiId)))];
+    [
+        new RestEndpoint("classified-leads", config.RestBaseUrl("classified-leads")),
+        new RestEndpoint("negotiation", config.RestBaseUrl("negotiation"))
+    ];
 
     private void InitializeRestClients(
         IAuthenticationProvider auth,
@@ -116,6 +120,8 @@ public class OffersAndLeadsClient : IDisposable
         var endpoints = RestEndpoints(config);
         var classifiedLeadsAdapter = new HttpClientRequestAdapter(auth, httpClient: httpClientFor(endpoints.First(endpoint => endpoint.ApiId == "classified-leads")));
         ClassifiedLeads = new ClassifiedLeadsClient(new ClassifiedLeadsApiClient(classifiedLeadsAdapter), config, tokenContext, classifiedLeadsAdapter);
+        var negotiationAdapter = new HttpClientRequestAdapter(auth, httpClient: httpClientFor(endpoints.First(endpoint => endpoint.ApiId == "negotiation")));
+        Negotiation = new NegotiationClient(new NegotiationApiClient(negotiationAdapter), config, tokenContext, negotiationAdapter);
     }
 
     public void Dispose()
@@ -128,6 +134,6 @@ public class OffersAndLeadsClient : IDisposable
     }
 }
 
-internal sealed record RestEndpoint(string ApiId, string HttpClientName, string BaseUrl);
+internal sealed record RestEndpoint(string ApiId, string BaseUrl);
 
 internal delegate HttpClient RestHttpClientProvider(RestEndpoint endpoint);

@@ -33,10 +33,18 @@ dotnet kiota generate \
   -o EBay.OffersAndLeads/Generated/ClassifiedLeads \
   --ebc --co
 
+dotnet kiota generate \
+  -l csharp \
+  -d specs/openapi/negotiation.json \
+  -c NegotiationApiClient \
+  -n EBay.OffersAndLeads.Generated.Negotiation \
+  -o EBay.OffersAndLeads/Generated/Negotiation \
+  --ebc --co
+
 echo "Adding license headers to generated files..."
 ./add-license-headers.sh ./EBay.OffersAndLeads/Generated
 
-echo "Building (triggers StrawberryShake GraphQL codegen)..."
+echo "Building (compile check)..."
 DOTNET_ROLL_FORWARD=LatestMajor dotnet build EBay.OffersAndLeads/EBay.OffersAndLeads.csproj
 
 echo "Done."

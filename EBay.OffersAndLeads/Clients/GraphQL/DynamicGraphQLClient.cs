@@ -59,17 +59,24 @@ internal sealed class DynamicGraphQLClient
                 "No access token available. Pass an accessToken per call or set OffersAndLeadsConfiguration.AccessToken.");
 
         using var req = new HttpRequestMessage(HttpMethod.Post, _config.GraphQLBaseUrl);
+        if (!_config.IsTrustedHost(req.RequestUri))
+            throw new InvalidOperationException(
+                $"GraphQLBaseUrl host '{req.RequestUri?.Host}' is not trusted with the access token. Add it to OffersAndLeadsConfiguration.AllowedHosts.");
         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         req.Content = new StringContent(
             JsonSerializer.Serialize(new { query, variables }, JsonOpts),
             Encoding.UTF8, "application/json");
 
         using var resp = await _http.SendAsync(req, ct).ConfigureAwait(false);
+#if NETFRAMEWORK
+        var body = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
+#else
         var body = await resp.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+#endif
 
         if (_config.DiagnosticLogging && !resp.IsSuccessStatusCode)
         {
-            var safeUrl = _config.GraphQLBaseUrl?.ReplaceLineEndings(" ") ?? string.Empty;
+            var safeUrl = _config.GraphQLBaseUrl?.Replace("\r", " ").Replace("\n", " ") ?? string.Empty;
             Console.Error.WriteLine($"[SDK] POST {safeUrl} → {(int)resp.StatusCode} {resp.ReasonPhrase}");
         }
 

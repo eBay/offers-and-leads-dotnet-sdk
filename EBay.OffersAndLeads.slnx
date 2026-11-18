@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="EBay.OffersAndLeads/EBay.OffersAndLeads.csproj" />
+  <Project Path="tests/EBay.OffersAndLeads.CSharp73/EBay.OffersAndLeads.CSharp73.csproj" />
+  <Project Path="tests/EBay.OffersAndLeads.Tests/EBay.OffersAndLeads.Tests.csproj" />
 </Solution>

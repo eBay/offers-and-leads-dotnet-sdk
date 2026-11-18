@@ -16,7 +16,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using EBay.OffersAndLeads.Exceptions;
-using StrawberryShake;
 
 #nullable enable
 
@@ -24,12 +23,12 @@ namespace EBay.OffersAndLeads.Clients.GraphQL;
 
 internal static class GraphQLInvocation
 {
-    internal static async Task<IOperationResult<T>> ExecuteAsync<T>(Func<Task<IOperationResult<T>>> call)
+    internal static async Task<GraphQLResponse<T>> ExecuteAsync<T>(Func<Task<GraphQLResponse<T>>> call)
         where T : class
     {
         try
         {
-            return await call();
+            return await call().ConfigureAwait(false);
         }
         catch (Exception ex) when (ex is not SdkException)
         {
@@ -39,19 +38,17 @@ internal static class GraphQLInvocation
 
     internal static SdkException WrapException(Exception ex) => ex switch
     {
-        HttpRequestException { StatusCode: HttpStatusCode.Unauthorized } => new UnauthorizedException(ex),
-        HttpRequestException { StatusCode: { } code } http =>
-            new SdkException($"GraphQL request failed with HTTP {(int)code}: {http.Message}", ex),
+        GraphQLHttpException { HttpStatus: HttpStatusCode.Unauthorized } => new UnauthorizedException(ex),
+        GraphQLHttpException http =>
+            new SdkException($"GraphQL request failed with HTTP {(int)http.HttpStatus}: {http.Message}", ex),
         HttpRequestException http =>
             new SdkException($"GraphQL request failed (network error): {http.Message} — check that GraphQLBaseUrl is reachable.", ex),
         TaskCanceledException =>
             new SdkException("GraphQL request timed out — check that GraphQLBaseUrl is reachable and the network is accessible.", ex),
-        InvalidOperationException { Message: var msg } when msg.Contains("execution attempt") =>
-            new SdkException("GraphQL request returned no data; the endpoint may be unreachable or returned an unexpected response — check GraphQLBaseUrl.", ex),
         _ => new SdkException($"GraphQL request failed: {ex.Message}", ex)
     };
 
-    internal static void EnsureNoErrors<T>(IOperationResult<T> result)
+    internal static void EnsureNoErrors<T>(GraphQLResponse<T> result)
         where T : class
     {
         if (result.Errors is { Count: > 0 })

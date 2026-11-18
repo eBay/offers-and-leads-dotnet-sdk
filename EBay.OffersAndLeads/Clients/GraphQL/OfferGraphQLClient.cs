@@ -20,22 +20,15 @@ namespace EBay.OffersAndLeads.Clients.GraphQL;
 
 public sealed class OfferGraphQLClient
 {
-    private readonly IOffersAndLeadsGraphQLClient? _client;
+    private readonly GraphQLExecutor _executor;
     private readonly DynamicGraphQLClient _dynamic;
     private readonly ITokenContext _tokenContext;
 
     internal OfferGraphQLClient(
-        IOffersAndLeadsGraphQLClient? client,
+        GraphQLExecutor executor,
         DynamicGraphQLClient dynamic,
         ITokenContext tokenContext)
-        => (_client, _dynamic, _tokenContext) = (client, dynamic, tokenContext);
-
-    private void EnsureTypedClientAvailable()
-    {
-        if (_client is null)
-            throw new NotSupportedException(
-                "Typed GraphQL operations require DI. Use ExecuteRawUnsafeAsync for standalone mode.");
-    }
+        => (_executor, _dynamic, _tokenContext) = (executor, dynamic, tokenContext);
 
     public Task<IAcceptOffer_AcceptOffer?> AcceptOfferAsync(
         AcceptOfferInput input,
@@ -43,8 +36,12 @@ public sealed class OfferGraphQLClient
         CancellationToken ct = default)
         => _tokenContext.RunAsync(accessToken, async () =>
         {
-            EnsureTypedClientAvailable();
-            var result = await GraphQLInvocation.ExecuteAsync(() => _client!.AcceptOffer.ExecuteAsync(input, ct));
+            var result = await GraphQLInvocation.ExecuteAsync(() => _executor.ExecuteAsync(
+                AcceptOfferOperation.OperationName,
+                AcceptOfferOperation.Document,
+                writer => AcceptOfferOperation.WriteVariables(writer, input),
+                AcceptOfferOperation.Parse,
+                ct)).ConfigureAwait(false);
             GraphQLInvocation.EnsureNoErrors(result);
             return result.Data?.AcceptOffer;
         });
@@ -55,8 +52,12 @@ public sealed class OfferGraphQLClient
         CancellationToken ct = default)
         => _tokenContext.RunAsync(accessToken, async () =>
         {
-            EnsureTypedClientAvailable();
-            var result = await GraphQLInvocation.ExecuteAsync(() => _client!.BuyerNegotiationHistory.ExecuteAsync(input, ct));
+            var result = await GraphQLInvocation.ExecuteAsync(() => _executor.ExecuteAsync(
+                BuyerNegotiationHistoryOperation.OperationName,
+                BuyerNegotiationHistoryOperation.Document,
+                writer => BuyerNegotiationHistoryOperation.WriteVariables(writer, input),
+                BuyerNegotiationHistoryOperation.Parse,
+                ct)).ConfigureAwait(false);
             GraphQLInvocation.EnsureNoErrors(result);
             return result.Data?.BuyerNegotiationHistory;
         });
@@ -67,8 +68,12 @@ public sealed class OfferGraphQLClient
         CancellationToken ct = default)
         => _tokenContext.RunAsync(accessToken, async () =>
         {
-            EnsureTypedClientAvailable();
-            var result = await GraphQLInvocation.ExecuteAsync(() => _client!.CounterOffer.ExecuteAsync(input, ct));
+            var result = await GraphQLInvocation.ExecuteAsync(() => _executor.ExecuteAsync(
+                CounterOfferOperation.OperationName,
+                CounterOfferOperation.Document,
+                writer => CounterOfferOperation.WriteVariables(writer, input),
+                CounterOfferOperation.Parse,
+                ct)).ConfigureAwait(false);
             GraphQLInvocation.EnsureNoErrors(result);
             return result.Data?.CounterOffer;
         });
@@ -79,8 +84,12 @@ public sealed class OfferGraphQLClient
         CancellationToken ct = default)
         => _tokenContext.RunAsync(accessToken, async () =>
         {
-            EnsureTypedClientAvailable();
-            var result = await GraphQLInvocation.ExecuteAsync(() => _client!.DeclineOffer.ExecuteAsync(input, ct));
+            var result = await GraphQLInvocation.ExecuteAsync(() => _executor.ExecuteAsync(
+                DeclineOfferOperation.OperationName,
+                DeclineOfferOperation.Document,
+                writer => DeclineOfferOperation.WriteVariables(writer, input),
+                DeclineOfferOperation.Parse,
+                ct)).ConfigureAwait(false);
             GraphQLInvocation.EnsureNoErrors(result);
             return result.Data?.DeclineOffer;
         });
@@ -91,8 +100,12 @@ public sealed class OfferGraphQLClient
         CancellationToken ct = default)
         => _tokenContext.RunAsync(accessToken, async () =>
         {
-            EnsureTypedClientAvailable();
-            var result = await GraphQLInvocation.ExecuteAsync(() => _client!.MakeOffer.ExecuteAsync(input, ct));
+            var result = await GraphQLInvocation.ExecuteAsync(() => _executor.ExecuteAsync(
+                MakeOfferOperation.OperationName,
+                MakeOfferOperation.Document,
+                writer => MakeOfferOperation.WriteVariables(writer, input),
+                MakeOfferOperation.Parse,
+                ct)).ConfigureAwait(false);
             GraphQLInvocation.EnsureNoErrors(result);
             return result.Data?.MakeOffer;
         });
@@ -103,8 +116,12 @@ public sealed class OfferGraphQLClient
         CancellationToken ct = default)
         => _tokenContext.RunAsync(accessToken, async () =>
         {
-            EnsureTypedClientAvailable();
-            var result = await GraphQLInvocation.ExecuteAsync(() => _client!.SellerNegotiationHistory.ExecuteAsync(input, ct));
+            var result = await GraphQLInvocation.ExecuteAsync(() => _executor.ExecuteAsync(
+                SellerNegotiationHistoryOperation.OperationName,
+                SellerNegotiationHistoryOperation.Document,
+                writer => SellerNegotiationHistoryOperation.WriteVariables(writer, input),
+                SellerNegotiationHistoryOperation.Parse,
+                ct)).ConfigureAwait(false);
             GraphQLInvocation.EnsureNoErrors(result);
             return result.Data?.SellerNegotiationHistory;
         });

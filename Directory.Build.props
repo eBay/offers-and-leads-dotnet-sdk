@@ -1,4 +1,19 @@
 <Project>
+  <!--
+    Dependency minimums: the lowest versions this SDK supports, published as ">= version" ranges.
+    Kiota 1.22.0 and Microsoft.Extensions.DependencyInjection.Abstractions 6.0.0 are Kiota 1.22.0's
+    own minimums. System.Text.Json (.NET Framework only; it is part of the runtime elsewhere) follows
+    the Azure SDK rule of aligning .NET runtime libraries with the oldest supported .NET LTS, which is
+    .NET 10 from November 2026; 10.0.0 has no known advisories. NuGet restores the lowest version in
+    a range, so a plain build and test run exercises these minimums; CI also tests the latest
+    versions by overriding the properties (see .github/workflows/validate.yml).
+  -->
+  <PropertyGroup>
+    <KiotaVersion Condition="'$(KiotaVersion)' == ''">1.22.0</KiotaVersion>
+    <DependencyInjectionVersion Condition="'$(DependencyInjectionVersion)' == ''">6.0.0</DependencyInjectionVersion>
+    <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">10.0.0</SystemTextJsonVersion>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(EBayLint)' == 'true'">
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>latest-Recommended</AnalysisLevel>

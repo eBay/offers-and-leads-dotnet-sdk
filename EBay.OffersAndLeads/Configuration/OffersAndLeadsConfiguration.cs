@@ -17,12 +17,19 @@ namespace EBay.OffersAndLeads.Configuration;
 public sealed class OffersAndLeadsConfiguration
 {
     private string _classifiedLeadsBaseUrl = "https://apiz.ebay.com/sell/leads/v1";
+    private string _negotiationBaseUrl = "https://api.ebay.com/sell/negotiation/v1";
     private string _graphQLBaseUrl = "https://api.ebay.com/graphql";
 
     public string ClassifiedLeadsBaseUrl
     {
         get => _classifiedLeadsBaseUrl;
         set => _classifiedLeadsBaseUrl = RequireHttps(value);
+    }
+
+    public string NegotiationBaseUrl
+    {
+        get => _negotiationBaseUrl;
+        set => _negotiationBaseUrl = RequireHttps(value);
     }
 
     public string GraphQLBaseUrl
@@ -45,7 +52,7 @@ public sealed class OffersAndLeadsConfiguration
     public bool DiagnosticLogging { get; set; }
 
     /// <summary>Timeout applied to all HTTP requests. Defaults to 30 seconds.</summary>
-    public TimeSpan HttpTimeout { get; init; } = TimeSpan.FromSeconds(30);
+    public TimeSpan HttpTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
     /// <summary>Default headers applied to every REST request. Per-call RequestOptions override these.</summary>
     public RequestOptions DefaultRequestOptions { get; set; } = new();
@@ -53,14 +60,53 @@ public sealed class OffersAndLeadsConfiguration
     internal string RestBaseUrl(string apiId) => apiId switch
     {
         "classified-leads" => _classifiedLeadsBaseUrl,
+        "negotiation" => _negotiationBaseUrl,
         _ => throw new ArgumentOutOfRangeException(nameof(apiId), apiId, "Unknown REST API.")
     };
 
-    internal static IEnumerable<string> AllowedHosts =>
-    [
+    /// <summary>eBay hosts that receive the access token by default.</summary>
+    public static IReadOnlyList<string> DefaultAllowedHosts { get; } = Array.AsReadOnly(new[]
+    {
+        "api.ebay.com",
+        "api.sandbox.ebay.com",
         "apiz.ebay.com",
-        "api.ebay.com"
-    ];
+        "apiz.sandbox.ebay.com",
+        "graphqlapi.sandbox.ebay.com"
+    });
+
+    /// <summary>
+    /// Additional hosts the SDK trusts with the access token, for example <c>api.sandbox.ebay.com</c>.
+    /// Every configured base URL must use a host from <see cref="DefaultAllowedHosts"/> or this list;
+    /// the client constructor throws otherwise. Requests to any other host never carry the token.
+    /// </summary>
+    public IList<string> AllowedHosts { get; set; } = new List<string>();
+
+    internal ISet<string> TrustedHosts() =>
+        new HashSet<string>(DefaultAllowedHosts.Concat(AllowedHosts ?? new List<string>()), StringComparer.OrdinalIgnoreCase);
+
+    internal bool IsTrustedHost(Uri? uri) =>
+        uri is not null
+        && string.Equals(uri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
+        && TrustedHosts().Contains(uri.Host);
+
+    internal void ValidateTrustedHosts()
+    {
+        var trusted = TrustedHosts();
+        foreach (var (name, url) in new (string Name, string Url)[]
+        {
+            ("ClassifiedLeadsBaseUrl", ClassifiedLeadsBaseUrl),
+            ("NegotiationBaseUrl", NegotiationBaseUrl),
+            ("GraphQLBaseUrl", GraphQLBaseUrl)
+        })
+        {
+            var host = new Uri(url).Host;
+            if (!trusted.Contains(host))
+            {
+                throw new InvalidOperationException(
+                    $"{name} uses host '{host}', which is not trusted with the access token. Add it to OffersAndLeadsConfiguration.AllowedHosts.");
+            }
+        }
+    }
 
     private static string RequireHttps(string value)
     {

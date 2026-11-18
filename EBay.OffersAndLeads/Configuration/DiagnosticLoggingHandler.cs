@@ -22,10 +22,10 @@ internal sealed class DiagnosticLoggingHandler : DelegatingHandler
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
     {
-        var response = await base.SendAsync(request, ct);
+        var response = await base.SendAsync(request, ct).ConfigureAwait(false);
         if (_config.DiagnosticLogging && !response.IsSuccessStatusCode)
         {
-            var safeUri = request.RequestUri?.ToString().ReplaceLineEndings(" ") ?? string.Empty;
+            var safeUri = request.RequestUri?.ToString().Replace("\r", " ").Replace("\n", " ") ?? string.Empty;
             Console.Error.WriteLine($"[SDK] {request.Method} {safeUri} → {(int)response.StatusCode} {response.ReasonPhrase}");
         }
         return response;
