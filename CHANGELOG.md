@@ -1,5 +1,15 @@
 # ChangeLog
 
+## 0.5.0 (11/26/2026)
+
+### Added
+
+- Local mock servers: base URL properties accept plain `http` when the host is a loopback host (`127.0.0.1`, `::1` or `localhost`) that you also add to `OffersAndLeadsConfiguration.AllowedHosts`. Before, every base URL had to use HTTPS. Every other host still requires HTTPS. `OffersAndLeadsConfiguration.LoopbackHosts` lists the loopback hosts.
+
+### Changed
+
+- Hosts are compared case-insensitively and without IPv6 brackets, so `[::1]` and `::1` match.
+
 ## 0.4.0 (11/17/2026)
 
 ### Breaking changes
